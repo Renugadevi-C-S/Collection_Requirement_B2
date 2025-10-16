@@ -1,8 +1,7 @@
 package com.example.collectionRequirements.request;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.example.collectionRequirements.approval.Approval;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -19,6 +18,9 @@ public class Request {
 //    private Department department;
 
 //    private Event eventId;
+
+    @OneToOne(mappedBy = "request")
+    private Approval approval;
 
     private LocalDate requestDate;
 
