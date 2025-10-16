@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.request;
 
 import com.example.collectionRequirements.approval.Approval;
+import com.example.collectionRequirements.event.Event;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -13,11 +14,15 @@ public class Request {
     @GeneratedValue
     private Long requestId;
 
-    private String requestorId;
+    private Long requestorId;
+
+//    private UserInfo requestor;
 
 //    private Department department;
 
-//    private Event eventId;
+    @ManyToOne
+    @JoinColumn(name = "eventId")
+    private Event event;
 
     @OneToOne(mappedBy = "request")
     private Approval approval;
@@ -33,6 +38,14 @@ public class Request {
     private String TAN_Number;
 
     private String curriculumLink;
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     @Override
     public String toString() {
@@ -70,11 +83,11 @@ public class Request {
         this.requestId = requestId;
     }
 
-    public String getRequestorId() {
+    public Long getRequestorId() {
         return requestorId;
     }
 
-    public void setRequestorId(String requestorId) {
+    public void setRequestorId(Long requestorId) {
         this.requestorId = requestorId;
     }
 

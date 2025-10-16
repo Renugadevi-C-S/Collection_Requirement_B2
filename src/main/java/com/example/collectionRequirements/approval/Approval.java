@@ -12,7 +12,7 @@ public class Approval {
     private Long approvalId;
 
     @OneToOne
-    @JoinColumn(name = "request_id")
+    @JoinColumn(name = "requestId")
     private Request request;
 
 //    private UserInfo approvedBy;
