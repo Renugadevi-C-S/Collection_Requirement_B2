@@ -66,4 +66,15 @@ public class Department {
     public void setRequests(List<Request> requests) {
         this.requests = requests;
     }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "departmentId=" + departmentId +
+                ", departmentName='" + departmentName + '\'' +
+                ", manager=" + manager +
+                ", users=" + users +
+                ", requests=" + requests +
+                '}';
+    }
 }
