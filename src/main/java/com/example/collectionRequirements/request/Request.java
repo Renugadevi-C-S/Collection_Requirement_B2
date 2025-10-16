@@ -2,6 +2,8 @@ package com.example.collectionRequirements.request;
 
 import com.example.collectionRequirements.approval.Approval;
 import com.example.collectionRequirements.event.Event;
+import com.example.department.Department;
+import com.example.user.UserInfo;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -19,8 +21,8 @@ public class Request {
 //    @JoinColumn
 //    private UserInfo requestor;
 
-//    @ManyToOne
-//    private Department department;
+    @ManyToOne
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "eventId")
@@ -37,15 +39,47 @@ public class Request {
 
     private String justification;
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Approval getApproval() {
+        return approval;
+    }
+
+    public void setApproval(Approval approval) {
+        this.approval = approval;
+    }
+
+    public Integer getNoOfParticipants() {
+        return noOfParticipants;
+    }
+
+    public void setNoOfParticipants(Integer noOfParticipants) {
+        this.noOfParticipants = noOfParticipants;
+    }
+
+    public List<UserInfo> getRequestedParticipants() {
+        return requestedParticipants;
+    }
+
+    public void setRequestedParticipants(List<UserInfo> requestedParticipants) {
+        this.requestedParticipants = requestedParticipants;
+    }
+
     private Integer noOfParticipants;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "RequestedParticipants",
-//            joinColumns = @JoinColumn(name = "Request_Id", referencedColumnName = "requestId"),
-//            inverseJoinColumns = @JoinColumn(name = "User_Id", referencedColumnName = "userId")
-//    )
-//    private List<UserInfo> requestedParticipants;
+    @ManyToMany
+    @JoinTable(
+            name = "RequestedParticipants",
+            joinColumns = @JoinColumn(name = "Request_Id", referencedColumnName = "requestId"),
+            inverseJoinColumns = @JoinColumn(name = "User_Id", referencedColumnName = "userId")
+    )
+    private List<UserInfo> requestedParticipants;
 
     private String TAN_Number;
 

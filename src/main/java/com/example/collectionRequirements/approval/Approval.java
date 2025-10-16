@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.approval;
 
 import com.example.collectionRequirements.request.Request;
+import com.example.user.UserInfo;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -16,11 +17,19 @@ public class Approval {
     @JoinColumn
     private Request request;
 
-//    @OneToOne
-//    @JoinColumn
-//    private UserInfo approvedBy;
+    @OneToOne
+    @JoinColumn
+    private UserInfo approvedBy;
 
     private LocalDate approvalDate;
+
+    public UserInfo getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(UserInfo approvedBy) {
+        this.approvedBy = approvedBy;
+    }
 
     private String approvalStatus;
 
