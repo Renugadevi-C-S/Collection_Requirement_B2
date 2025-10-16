@@ -5,6 +5,7 @@ import com.example.collectionRequirements.event.Event;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,10 +15,11 @@ public class Request {
     @GeneratedValue
     private Long requestId;
 
-    private Long requestorId;
-
+//    @OneToOne
+//    @JoinColumn
 //    private UserInfo requestor;
 
+//    @ManyToOne
 //    private Department department;
 
     @ManyToOne
@@ -35,6 +37,16 @@ public class Request {
 
     private String justification;
 
+    private Integer noOfParticipants;
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "RequestedParticipants",
+//            joinColumns = @JoinColumn(name = "Request_Id", referencedColumnName = "requestId"),
+//            inverseJoinColumns = @JoinColumn(name = "User_Id", referencedColumnName = "userId")
+//    )
+//    private List<UserInfo> requestedParticipants;
+
     private String TAN_Number;
 
     private String curriculumLink;
@@ -51,7 +63,6 @@ public class Request {
     public String toString() {
         return "Request{" +
                 "requestId=" + requestId +
-                ", requestorId='" + requestorId + '\'' +
 //                ", department=" + department +
 //                ", eventId=" + eventId +
                 ", requestDate=" + requestDate +
@@ -83,13 +94,6 @@ public class Request {
         this.requestId = requestId;
     }
 
-    public Long getRequestorId() {
-        return requestorId;
-    }
-
-    public void setRequestorId(Long requestorId) {
-        this.requestorId = requestorId;
-    }
 
     public LocalDate getRequestDate() {
         return requestDate;

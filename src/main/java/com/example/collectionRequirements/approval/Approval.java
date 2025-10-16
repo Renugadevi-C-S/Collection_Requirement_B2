@@ -9,12 +9,15 @@ import java.time.LocalDate;
 public class Approval {
 
     @Id
+    @GeneratedValue
     private Long approvalId;
 
     @OneToOne
-    @JoinColumn(name = "requestId")
+    @JoinColumn
     private Request request;
 
+//    @OneToOne
+//    @JoinColumn
 //    private UserInfo approvedBy;
 
     private LocalDate approvalDate;
