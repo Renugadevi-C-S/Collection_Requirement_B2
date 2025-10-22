@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name="Events")
 public class Event {
 
     @Id
@@ -32,6 +33,7 @@ public class Event {
     public Long getEventId() {
         return eventId;
     }
+
 
     public void setEventId(Long eventId) {
         this.eventId = eventId;
