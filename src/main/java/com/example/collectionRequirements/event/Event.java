@@ -26,7 +26,7 @@ public class Event {
 
     private String eventType;
 
-    private Long fundingSource;
+    private String fundingSource;
 
     private String status;
 
@@ -86,11 +86,11 @@ public class Event {
         this.eventType = eventType;
     }
 
-    public Long getFundingSource() {
+    public String getFundingSource() {
         return fundingSource;
     }
 
-    public void setFundingSource(Long fundingSource) {
+    public void setFundingSource(String fundingSource) {
         this.fundingSource = fundingSource;
     }
 
