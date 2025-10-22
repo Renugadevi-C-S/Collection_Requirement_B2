@@ -91,13 +91,6 @@ public class UserInfo {
         this.requests = requests;
     }
 
-    public Approval getApproval() {
-        return approval;
-    }
-
-    public void setApproval(Approval approval) {
-        this.approval = approval;
-    }
 
     @ManyToOne
     @JsonIgnore
@@ -112,8 +105,6 @@ public class UserInfo {
     @JsonIgnore
     private List<Request> requests;
 
-    @OneToOne(mappedBy = "approvedBy")
-    @JsonIgnore
-    private Approval approval;
+
 
 }
