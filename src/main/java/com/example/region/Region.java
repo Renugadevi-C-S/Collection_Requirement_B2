@@ -1,6 +1,7 @@
 package com.example.region;
 
 import com.example.user.UserInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
