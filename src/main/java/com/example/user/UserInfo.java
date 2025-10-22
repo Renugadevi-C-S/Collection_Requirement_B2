@@ -91,13 +91,7 @@ public class UserInfo {
         this.requests = requests;
     }
 
-    public Approval getApproval() {
-        return approval;
-    }
 
-    public void setApproval(Approval approval) {
-        this.approval = approval;
-    }
 
     @ManyToOne
     @JsonIgnore
