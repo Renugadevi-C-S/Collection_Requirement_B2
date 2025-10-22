@@ -112,8 +112,6 @@ public class UserInfo {
     @JsonIgnore
     private List<Request> requests;
 
-    @OneToOne(mappedBy = "approvedBy")
-    @JsonIgnore
-    private Approval approval;
+
 
 }
