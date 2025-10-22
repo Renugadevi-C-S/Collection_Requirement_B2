@@ -51,6 +51,7 @@ public class Region {
     }
 
     @OneToMany(mappedBy = "region")
+    @JsonIgnore
     private List<UserInfo> users;
 
 
