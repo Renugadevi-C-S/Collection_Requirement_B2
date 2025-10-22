@@ -17,15 +17,15 @@ public class Request {
     @GeneratedValue
     private Long requestId;
 
-//    @OneToOne
-//    @JoinColumn
-//    private UserInfo requestor;
+    @OneToOne
+    @JoinColumn
+    private UserInfo requestor;
 
     @ManyToOne
     private Department department;
 
     @ManyToOne
-    @JoinColumn(name = "eventId")
+    @JoinColumn
     private Event event;
 
     @OneToOne(mappedBy = "request")
