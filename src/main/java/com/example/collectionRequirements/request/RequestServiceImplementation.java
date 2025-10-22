@@ -18,13 +18,13 @@ public class RequestServiceImplementation implements RequestService {
         this.requestRepository = requestRepository;
     }
 
-    public Request createRequest(Request newRequest) throws GeneralException
+    public Request createRequest(Request newRequest) throws RequestException
     {
         newRequest.setRequestDate(LocalDate.now());
         newRequest.setRequestStatus("Submitted");
         return requestRepository.save(newRequest);
     }
-    public Request getRequestById(long requestId) throws GeneralException
+    public Request getRequestById(long requestId) throws RequestException
     {
         Optional<Request> findRequest=requestRepository.findById(requestId);
         if(findRequest.isEmpty())
@@ -33,11 +33,11 @@ public class RequestServiceImplementation implements RequestService {
         }
         return findRequest.get();
     }
-    public List<Request> getAllRequests() throws GeneralException
+    public List<Request> getAllRequests() throws RequestException
     {
         return requestRepository.findAll();
     }
-    public List<Request> getRequestByStatus(String status) throws GeneralException
+    public List<Request> getRequestByStatus(String status) throws RequestException
     {
         return requestRepository.findByRequestStatus(status);
     }

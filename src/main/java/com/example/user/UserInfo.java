@@ -2,6 +2,7 @@ package com.example.user;
 
 import com.example.collectionRequirements.approval.Approval;
 import com.example.collectionRequirements.request.Request;
+import com.example.department.Department;
 import com.example.region.Region;
 import jakarta.persistence.*;
 
@@ -19,8 +20,8 @@ public class UserInfo {
 
     private String email;
 
-//    @ManyToOne
-//    private Department department;
+    @ManyToOne
+    private Department department;
 
     private String role;
 
@@ -100,6 +101,7 @@ public class UserInfo {
     private Region region;
 
     @OneToOne
+    @JoinColumn
     private UserInfo manager;
 
     @ManyToMany(mappedBy = "requestedParticipants")

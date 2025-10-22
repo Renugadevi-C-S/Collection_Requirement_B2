@@ -15,7 +15,7 @@ public class Department {
 
     private String departmentName;
 
-    @OneToOne(mappedBy = "manager")
+    @OneToOne
     private UserInfo manager;
 
     @OneToMany(mappedBy = "department")

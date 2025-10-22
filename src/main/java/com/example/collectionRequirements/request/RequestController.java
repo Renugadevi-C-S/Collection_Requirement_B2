@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("api/requests")
 public class RequestController {
 
-    private RequestService requestService;
+    private final RequestService requestService;
 
     @Autowired
     public RequestController(RequestService requestService) {
@@ -19,13 +19,13 @@ public class RequestController {
     }
 
     @PostMapping("/newRequest")
-    public Request newrequest(@RequestBody Request newRequest) throws GeneralException
+    public Request newrequest(@RequestBody Request newRequest) throws RequestException
     {
         return requestService.createRequest(newRequest);
     }
 
     @GetMapping("/all")
-    public List<Request> getAllRequests() throws GeneralException
+    public List<Request> getAllRequests() throws RequestException
     {
         return requestService.getAllRequests();
     }
