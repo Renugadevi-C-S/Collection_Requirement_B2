@@ -2,6 +2,7 @@ package com.example.collectionRequirements.request;
 
 
 
+import com.example.DTOs.LCRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,15 +31,13 @@ public class RequestController {
         return requestService.getAllRequests();
     }
 
-    @GetMapping("/{id}")
-    public Request getRequestById(@PathVariable Long id)
-    {
-        return requestService.getRequestById(id);
+    @GetMapping("/{requestId}")
+    public LCRequestResponse getRequestById(@PathVariable Long requestId) throws RequestException {
+        return requestService.getRequestById(requestId);
     }
 
-    @GetMapping("/{status}")
-    public List<Request> getRequestByStatus(@PathVariable String status)
-    {
+    @GetMapping("/status/{status}")
+    public List<Request> getRequestByStatus(@PathVariable String status) throws RequestException {
         return requestService.getRequestByStatus(status);
     }
 

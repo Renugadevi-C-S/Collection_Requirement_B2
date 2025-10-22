@@ -4,6 +4,7 @@ import com.example.collectionRequirements.approval.Approval;
 import com.example.collectionRequirements.request.Request;
 import com.example.department.Department;
 import com.example.region.Region;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class UserInfo {
     private String email;
 
     @ManyToOne
+    @JsonIgnore
     private Department department;
 
     private String role;
@@ -98,16 +100,20 @@ public class UserInfo {
     }
 
     @ManyToOne
+    @JsonIgnore
     private Region region;
 
     @OneToOne
     @JoinColumn
+    @JsonIgnore
     private UserInfo manager;
 
     @ManyToMany(mappedBy = "requestedParticipants")
+    @JsonIgnore
     private List<Request> requests;
 
     @OneToOne(mappedBy = "approvedBy")
+    @JsonIgnore
     private Approval approval;
 
 }

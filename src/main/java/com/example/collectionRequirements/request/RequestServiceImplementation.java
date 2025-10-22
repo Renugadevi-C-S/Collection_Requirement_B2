@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.request;
 
 
+import com.example.DTOs.LCRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -24,14 +25,21 @@ public class RequestServiceImplementation implements RequestService {
         newRequest.setRequestStatus("Submitted");
         return requestRepository.save(newRequest);
     }
-    public Request getRequestById(long requestId) throws RequestException
-    {
-        Optional<Request> findRequest=requestRepository.findById(requestId);
-        if(findRequest.isEmpty())
-        {
-            System.out.println("Request Not Found");
-        }
-        return findRequest.get();
+    public LCRequestResponse getRequestById(long requestId) throws RequestException {
+        Request fetchedRequest = requestRepository.findById(requestId)
+                .orElseThrow(()->new RequestException("Request Not Found"));
+
+        LCRequestResponse lcRequestResponse = new LCRequestResponse();
+
+        lcRequestResponse.setRequestId(fetchedRequest.getRequestId());
+        lcRequestResponse.setRequestStatus(fetchedRequest.getRequestStatus());
+        lcRequestResponse.setRequestDate(fetchedRequest.getRequestDate());
+        lcRequestResponse.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
+        lcRequestResponse.setJustification(fetchedRequest.getJustification());
+        lcRequestResponse.setEventName(fetchedRequest.getEvent().getEventName());
+        lcRequestResponse.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
+
+        return lcRequestResponse;
     }
     public List<Request> getAllRequests() throws RequestException
     {
