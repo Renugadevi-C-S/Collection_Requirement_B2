@@ -33,6 +33,7 @@ public class EventController {
 
 
 
+
     @GetMapping("/status/{status}")
     public ResponseEntity<?> getEventsByStatus(@PathVariable String status) {
         try {

@@ -25,9 +25,25 @@ public class EventServiceImplementation implements EventService {
     }
 
 
+    @Override
+    public Event getEventById(Long eventId) throws EventException {
+        return null;
+    }
 
+    @Override
+    public List<Event> getAllEvents() throws EventException {
+        return List.of();
+    }
 
+    @Override
+    public Event editEvent(Long eventId, Event updateEvent) throws EventException {
+        return null;
+    }
 
+    @Override
+    public void deleteEvent(Long eventId) throws EventException {
+
+    }
 
 
     @Override
