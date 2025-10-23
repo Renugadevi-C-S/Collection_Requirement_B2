@@ -13,4 +13,8 @@ public interface EventService {
 
     void deleteEvent(Long eventId) throws EventException;
 
+    List<Event> getEventsByStatus(String status) throws EventException;
+
+    List<Event> getEventsByType(String eventType) throws EventException;
+
 }
