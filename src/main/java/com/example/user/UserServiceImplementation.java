@@ -1,9 +1,9 @@
 package com.example.user;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -11,16 +11,25 @@ public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public  UserServiceImplementation(UserRepository userRepository) {
+    public UserServiceImplementation(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public UserInfo addUser(UserInfo userInfo) {
-        Optional<UserInfo> existingUser = userRepository.findByCdsID(userInfo.getCdsID());
-        if (existingUser.isPresent()) {
-            throw new UserException("User with cdsID '" + userInfo.getCdsID() + "' already exists.");
-        }
+
+    public UserInfo createUser(UserInfo userInfo) {
         return userRepository.save(userInfo);
+    }
+
+    public List<UserInfo> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public UserInfo getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }
