@@ -91,6 +91,8 @@ public class UserInfo {
         this.requests = requests;
     }
 
+
+
     @ManyToOne
     @JsonIgnore
     private Region region;
@@ -103,5 +105,7 @@ public class UserInfo {
     @ManyToMany(mappedBy = "requestedParticipants")
     @JsonIgnore
     private List<Request> requests;
+
+
 
 }

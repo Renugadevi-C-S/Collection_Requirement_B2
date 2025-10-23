@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.event;
 
 import com.example.collectionRequirements.request.Request;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class Event {
 
     @Id
     @GeneratedValue
+
     private Long eventId;
 
     private String eventName;
@@ -18,6 +20,7 @@ public class Event {
     private String description;
 
     @OneToMany(mappedBy = "event")
+    @JsonIgnore
     private List<Request> requests;
 
     private Integer participantsCount;

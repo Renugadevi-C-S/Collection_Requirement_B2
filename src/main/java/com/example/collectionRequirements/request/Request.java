@@ -4,6 +4,7 @@ import com.example.collectionRequirements.approval.Approval;
 import com.example.collectionRequirements.event.Event;
 import com.example.department.Department;
 import com.example.user.UserInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -20,16 +21,20 @@ public class Request {
 
     @OneToOne
     @JoinColumn
+    @JsonIgnore
     private UserInfo requestor;
 
     @ManyToOne
+    @JsonIgnore
     private Department department;
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private Event event;
 
     @OneToOne(mappedBy = "request")
+    @JsonIgnore
     private Approval approval;
 
     private LocalDate requestDate;
@@ -80,6 +85,7 @@ public class Request {
             joinColumns = @JoinColumn(name = "Request_Id", referencedColumnName = "requestId"),
             inverseJoinColumns = @JoinColumn(name = "User_Id", referencedColumnName = "userId")
     )
+    @JsonIgnore
     private List<UserInfo> requestedParticipants;
 
     private String TAN_Number;
