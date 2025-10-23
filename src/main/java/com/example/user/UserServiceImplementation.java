@@ -1,5 +1,7 @@
 package com.example.user;
 
+import com.example.DTOs.LogInRequest;
+import com.example.DTOs.LogInResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +45,22 @@ public class UserServiceImplementation implements UserService {
         }
 
         return fetchedUser.get();
+    }
+
+    @Override
+    public LogInResponse logIn(LogInRequest logInRequest) throws UserException {
+
+        LogInResponse logInResponse = new LogInResponse();
+
+
+        UserInfo fetchedUser = getUserByCdsId(logInRequest.getCdsId());
+        if(fetchedUser == null) {
+            throw new UserException("User not found with id: " + logInRequest.getCdsId());
+        }
+        logInResponse.setCsdId(fetchedUser.getCdsID());
+        logInResponse.setMessage("Valid User");
+        logInResponse.setRole(fetchedUser.getRole());
+
+        return logInResponse;
     }
 }

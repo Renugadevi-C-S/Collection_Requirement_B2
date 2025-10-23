@@ -1,12 +1,16 @@
 package com.example.user;
 
+import com.example.DTOs.LogInRequest;
+import com.example.DTOs.LogInResponse;
+import com.example.collectionRequirements.request.RequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080"})
 @RequestMapping("api/users")
 public class UserController {
 
@@ -41,6 +45,11 @@ public class UserController {
     @DeleteMapping("/delete/{userId}")
     public void deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
+    }
+
+    @PostMapping("/login")
+    public LogInResponse login(@RequestBody LogInRequest logInRequest) throws RequestException {
+        return userService.logIn(logInRequest);
     }
 
 }
