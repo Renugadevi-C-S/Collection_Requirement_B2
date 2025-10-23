@@ -19,10 +19,9 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @PostMapping("/newRequest")
-    public Request newrequest(@RequestBody Request newRequest) throws RequestException
-    {
-        return requestService.createRequest(newRequest);
+    @PostMapping("/newRequest/{requestorCdsId}/{deptName}")
+    public Request newRequest(@RequestBody Request newRequest, @PathVariable String requestorCdsId ,@PathVariable String deptName) throws RequestException {
+        return requestService.createRequest(newRequest, requestorCdsId, deptName);
     }
 
     @GetMapping("/all")
@@ -34,6 +33,11 @@ public class RequestController {
     @GetMapping("/{requestId}")
     public LCRequestResponse getRequestById(@PathVariable Long requestId) throws RequestException {
         return requestService.getRequestById(requestId);
+    }
+
+    @GetMapping("/requestor/{cdsId}")
+    public List<LCRequestResponse> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
+        return requestService.getRequestByCdsId(cdsId);
     }
 
     @GetMapping("/status/{status}")

@@ -21,6 +21,12 @@ public class UserController {
         return userService.createUser(userInfo);
     }
 
+    @GetMapping("/cdsId/{cdsId}")
+    public UserInfo getUserByCdsId(@PathVariable("cdsId") String cdsId) {
+        return userService.getUserByCdsId(cdsId);
+    }
+
+
     @GetMapping("/all")
     public List<UserInfo> getAllUsers() {
         return userService.getAllUsers();

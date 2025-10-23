@@ -16,6 +16,9 @@ public class UserInfo {
     @GeneratedValue
     private Long userId;
 
+    @Column(unique = true)
+    private String cdsID;
+
     private String firstName;
     private String lastName;
 
@@ -91,7 +94,21 @@ public class UserInfo {
         this.requests = requests;
     }
 
+    public String getCdsID() {
+        return cdsID;
+    }
 
+    public void setCdsID(String cdsID) {
+        this.cdsID = cdsID;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
     @ManyToOne
     @JsonIgnore

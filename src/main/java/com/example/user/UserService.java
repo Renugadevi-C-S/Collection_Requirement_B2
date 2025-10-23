@@ -9,4 +9,5 @@ public interface UserService {
     UserInfo getUserById(Long id);
     void deleteUser(Long id);
 
+    UserInfo getUserByCdsId(String cdsId) throws UserException;
 }

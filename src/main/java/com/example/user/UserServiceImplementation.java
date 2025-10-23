@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -31,5 +32,16 @@ public class UserServiceImplementation implements UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserInfo getUserByCdsId(String cdsId) throws UserException {
+        Optional<UserInfo> fetchedUser =  userRepository.findByCdsID(cdsId);
+
+        if(fetchedUser.isEmpty()) {
+            throw new UserException("User not found with id: " + cdsId);
+        }
+
+        return fetchedUser.get();
     }
 }

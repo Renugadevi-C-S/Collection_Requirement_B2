@@ -26,9 +26,19 @@ public class DepartmentController {
         return departmentService.getAllDepartments();
     }
 
+    @PostMapping("/{deptName}/add-user/{cdsId}")
+    public Department addUserToDepartment(@PathVariable String cdsId, @PathVariable String deptName) {
+        return departmentService.addUserToDepartment(cdsId, deptName);
+    }
+
     @GetMapping("/{departmentId}")
     public Department getDepartmentById(@PathVariable Long departmentId) {
         return departmentService.getDepartmentById(departmentId);
+    }
+
+    @GetMapping("/name/{deptName}")
+    public Department getDepartmentByName(@PathVariable String deptName) {
+        return departmentService.getDepartmentByName(deptName);
     }
 
     @DeleteMapping("/delete/{departmentId}")
