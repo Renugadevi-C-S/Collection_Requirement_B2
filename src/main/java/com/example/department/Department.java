@@ -17,6 +17,7 @@ public class Department {
     private String departmentName;
 
     @OneToOne
+    @JsonIgnore
     private UserInfo manager;
 
     @OneToMany(mappedBy = "department")
