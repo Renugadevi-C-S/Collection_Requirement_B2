@@ -5,6 +5,15 @@ public class LogInResponse {
     private String message;
     private String csdId;
     private String role;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public LogInResponse(String message, String csdId, String role) {
         this.message = message;
