@@ -24,27 +24,65 @@ public class EventServiceImplementation implements EventService {
         return eventRepository.save(newEvent);
     }
 
-
     @Override
     public Event getEventById(Long eventId) throws EventException {
-        return null;
+        Optional<Event> findEvent = eventRepository.findById(eventId);
+        if(findEvent.isEmpty())
+        {
+            throw new EventException("Event with ID " + eventId + " not found");
+        }
+        return findEvent.get();
     }
 
     @Override
     public List<Event> getAllEvents() throws EventException {
-        return List.of();
+
+        try {
+            return eventRepository.findAll();
+        } catch (Exception e) {
+            throw new EventException("Failed to retrieve all events.");
+        }
     }
 
     @Override
-    public Event editEvent(Long eventId, Event updateEvent) throws EventException {
-        return null;
+    public Event editEvent(Long eventId, Event updatedEvent) throws EventException {
+        Optional<Event> existingEventOpt = eventRepository.findById(eventId);
+        if (existingEventOpt.isEmpty()) {
+            throw new EventException("Event with ID " + eventId + " not found");
+        }
+        Event existingEvent = existingEventOpt.get();
+        if (updatedEvent.getEventName() != null && !updatedEvent.getEventName().trim().isEmpty()) {
+            existingEvent.setEventName(updatedEvent.getEventName());
+        }
+        if (updatedEvent.getDescription() != null) {
+            existingEvent.setDescription(updatedEvent.getDescription());
+        }
+        if (updatedEvent.getParticipantsCount() != null) {
+            existingEvent.setParticipantsCount(updatedEvent.getParticipantsCount());
+        }
+        if (updatedEvent.getDuration() != null) {
+            existingEvent.setDuration(updatedEvent.getDuration());
+        }
+        if (updatedEvent.getEventType() != null) {
+            existingEvent.setEventType(updatedEvent.getEventType());
+        }
+        if (updatedEvent.getFundingSource() != null) {
+            existingEvent.setFundingSource(updatedEvent.getFundingSource());
+        }
+        if (updatedEvent.getStatus() != null) {
+            existingEvent.setStatus(updatedEvent.getStatus());
+        }
+        return eventRepository.save(existingEvent);
     }
 
     @Override
     public void deleteEvent(Long eventId) throws EventException {
 
+        if (!eventRepository.existsById(eventId)) {
+            throw new EventException("Event with ID " + eventId + " not found for deletion.");
+        }
+        eventRepository.deleteById(eventId);
     }
-
 
     @Override
     public List<Event> getEventsByStatus(String status) throws EventException{

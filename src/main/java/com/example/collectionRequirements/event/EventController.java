@@ -28,11 +28,45 @@ public class EventController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllEvents() {
+        try {
+            List<Event> events = eventService.getAllEvents();
+            return new ResponseEntity<>(events, HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    @GetMapping("/{eventId}")
+    public ResponseEntity<?> getEventById(@PathVariable Long eventId) {
+        try {
+            Event event = eventService.getEventById(eventId);
+            return new ResponseEntity<>(event, HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @PatchMapping("/editEvent/{eventId}")
+    public ResponseEntity<?> editEvent(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
+        try {
+            Event event = eventService.editEvent(eventId, updatedEvent);
+            return new ResponseEntity<>(event, HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
-
-
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) {
+        try {
+            eventService.deleteEvent(eventId);
+            return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping("/status/{status}")
     public ResponseEntity<?> getEventsByStatus(@PathVariable String status) {
