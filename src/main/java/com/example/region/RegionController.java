@@ -21,6 +21,16 @@ public class RegionController {
         return regionService.createRegion(newRegion);
     }
 
+    @GetMapping("/name/{regionName}")
+    public Region getRegionByName(@PathVariable String regionName) {
+        return regionService.getRegionByName(regionName);
+    }
+
+    @PostMapping("/{regionName}/add-user/{csdId}")
+    public Region addUserToRegion(@PathVariable String regionName, @PathVariable String csdId) {
+        return regionService.addUserToRegionByCdsId(regionName, csdId);
+    }
+
     @GetMapping("/all")
     public List<Region> getAllRegions() {
         return regionService.getAllRegions();

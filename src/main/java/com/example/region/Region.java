@@ -3,6 +3,7 @@ package com.example.region;
 import com.example.user.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Future;
@@ -13,6 +14,7 @@ import java.util.List;
 public class Region {
 
     @Id
+    @GeneratedValue
     private Long regionId;
 
     private String regionName;

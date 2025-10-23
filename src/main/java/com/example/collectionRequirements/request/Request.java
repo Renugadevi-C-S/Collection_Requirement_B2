@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Requests")
 public class Request {
 
     @Id
@@ -23,6 +22,14 @@ public class Request {
     @JoinColumn
     @JsonIgnore
     private UserInfo requestor;
+
+    public UserInfo getRequestor() {
+        return requestor;
+    }
+
+    public void setRequestor(UserInfo requestor) {
+        this.requestor = requestor;
+    }
 
     @ManyToOne
     @JsonIgnore

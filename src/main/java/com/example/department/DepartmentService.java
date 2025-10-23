@@ -8,4 +8,7 @@ public interface DepartmentService {
     Department getDepartmentById(Long id);
     void deleteDepartment(Long id);
 
+    Department getDepartmentByName(String deptName) throws DepartmentException;
+
+    Department addUserToDepartment(String cdsId, String deptName);
 }
