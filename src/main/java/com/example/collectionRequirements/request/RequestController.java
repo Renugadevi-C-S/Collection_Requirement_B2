@@ -3,6 +3,8 @@ package com.example.collectionRequirements.request;
 
 
 import com.example.DTOs.LCRequestResponse;
+import com.example.DTOs.RequestDetails;
+import com.example.DTOs.RequestSubmitResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +22,14 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @PostMapping("/newRequest/{requestorCdsId}/{deptName}")
-    public Request newRequest(@RequestBody Request newRequest, @PathVariable String requestorCdsId ,@PathVariable String deptName) throws RequestException {
-        return requestService.createRequest(newRequest, requestorCdsId, deptName);
+//    @PostMapping("/newRequest/{requestorCdsId}/{deptName}")
+//    public Request newRequest(@RequestBody Request newRequest, @PathVariable String requestorCdsId ,@PathVariable String deptName) throws RequestException {
+//        return requestService.createRequest(newRequest, requestorCdsId, deptName);
+//    }
+
+    @PostMapping("/newRequest")
+    public RequestSubmitResponse submitNewRequest(@RequestBody RequestDetails requestDetails) {
+        return requestService.submitNewRequest(requestDetails);
     }
 
     @GetMapping("/all")

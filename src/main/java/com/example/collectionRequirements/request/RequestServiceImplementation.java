@@ -2,6 +2,8 @@ package com.example.collectionRequirements.request;
 
 
 import com.example.DTOs.LCRequestResponse;
+import com.example.DTOs.RequestDetails;
+import com.example.DTOs.RequestSubmitResponse;
 import com.example.department.Department;
 import com.example.department.DepartmentException;
 import com.example.department.DepartmentRepository;
@@ -110,6 +112,33 @@ public class RequestServiceImplementation implements RequestService {
 
                 return lcRequestResponse;
             }).toList();
+    }
+
+    @Override
+    public RequestSubmitResponse submitNewRequest(RequestDetails requestDetails) throws UserException, DepartmentException {
+        Request newRequest = new Request();
+
+        UserInfo requestor = userRepository.findByCdsID(requestDetails.getRequestorId())
+                .orElseThrow(()->new UserException("User not found for cdsId: "+requestDetails.getRequestorId()));
+
+        newRequest.setRequestor(requestor);
+
+        Department department = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDeptName());
+        if(department == null)
+            throw new DepartmentException("Department not found for name: "+requestDetails.getDeptName());
+
+        newRequest.setDepartment(department);
+        newRequest.setRequestDate(LocalDate.now());
+        newRequest.setGroupRequest(requestDetails.getNoOfParticipants() >= 10);
+        newRequest.setNoOfParticipants(requestDetails.getNoOfParticipants());
+        newRequest.setRequestStatus("Submitted");
+        newRequest.setJustification(requestDetails.getJustification());
+        newRequest.setTAN_Number(requestDetails.getTanNo());
+        newRequest.setCurriculumLink(requestDetails.getCurriculumLink());
+
+        requestRepository.save(newRequest);
+
+        return new RequestSubmitResponse("New Request Submitted Successfully ");
     }
 
 
