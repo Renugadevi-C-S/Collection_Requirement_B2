@@ -60,7 +60,7 @@ public class UserServiceImplementation implements UserService {
         logInResponse.setCsdId(fetchedUser.getCdsID());
         logInResponse.setMessage("Valid User");
         logInResponse.setRole(fetchedUser.getRole());
-        logInResponse.setFristName(fetchedUser.getFirstName());
+        logInResponse.setFirstName(fetchedUser.getFirstName());
         logInResponse.setLastName(fetchedUser.getLastName());
 
         return logInResponse;
