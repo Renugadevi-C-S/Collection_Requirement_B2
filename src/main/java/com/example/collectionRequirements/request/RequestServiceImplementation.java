@@ -47,10 +47,6 @@ public class RequestServiceImplementation implements RequestService {
         if(requestor.isEmpty())
             throw new UserException("No user or requestor found for "+requestorCdsId);
 
-        if(!requestor.get().getRole().equals("LC") &&
-                !requestor.get().getRole().equals("L&DSPoC"))
-            throw new RequestException("Only LC requestors can be requested for LC");
-
         newRequest.setRequestor(requestor.get());
         newRequest.setDepartment(fetchDept);
 
