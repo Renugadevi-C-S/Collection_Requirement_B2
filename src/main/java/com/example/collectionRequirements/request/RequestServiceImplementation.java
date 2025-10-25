@@ -107,6 +107,8 @@ public class RequestServiceImplementation implements RequestService {
                     lcRequestResponse.setDepartment(request.getDepartment().getDepartmentName());
                 if(request.getEvent()!=null)
                     lcRequestResponse.setEventName(request.getEvent().getEventName());
+                else
+                    lcRequestResponse.setEventName("EventNotCreated");
                 lcRequestResponse.setJustification(request.getJustification());
                 lcRequestResponse.setNoOfParticipants(request.getNoOfParticipants());
 
