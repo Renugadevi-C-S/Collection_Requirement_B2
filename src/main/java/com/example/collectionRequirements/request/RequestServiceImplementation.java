@@ -31,26 +31,7 @@ public class RequestServiceImplementation implements RequestService {
         this.departmentRepository = departmentRepository;
     }
 
-    public Request createRequest(Request newRequest, String requestorCdsId, String deptName) throws RequestException
-    {
-        newRequest.setRequestDate(LocalDate.now());
-        newRequest.setRequestStatus("Submitted");
-        newRequest.setGroupRequest(newRequest.getNoOfParticipants() >= 10);
 
-        Department fetchDept = departmentRepository.findByDepartmentNameIgnoreCase(deptName);
-        if(fetchDept == null)
-            throw new DepartmentException("Department not found for "+deptName);
-
-        Optional<UserInfo> requestor = userRepository.findByCdsID(requestorCdsId);
-
-        if(requestor.isEmpty())
-            throw new UserException("No user or requestor found for "+requestorCdsId);
-
-        newRequest.setRequestor(requestor.get());
-        newRequest.setDepartment(fetchDept);
-
-        return requestRepository.save(newRequest);
-    }
     public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
                 .orElseThrow(()->new RequestException("Request Not Found"));

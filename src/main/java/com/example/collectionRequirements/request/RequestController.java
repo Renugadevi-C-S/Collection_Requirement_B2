@@ -22,10 +22,7 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-//    @PostMapping("/newRequest/{requestorCdsId}/{deptName}")
-//    public Request newRequest(@RequestBody Request newRequest, @PathVariable String requestorCdsId ,@PathVariable String deptName) throws RequestException {
-//        return requestService.createRequest(newRequest, requestorCdsId, deptName);
-//    }
+
 
     @PostMapping("/newRequest")
     public RequestSubmitResponse submitNewRequest(@RequestBody RequestDetails requestDetails) {
