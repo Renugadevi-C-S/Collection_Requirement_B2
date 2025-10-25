@@ -2,7 +2,7 @@ package com.example.collectionRequirements.request;
 
 
 
-import com.example.DTOs.LCRequestResponse;
+import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +39,12 @@ public class RequestController {
     }
 
     @GetMapping("/{requestId}")
-    public LCRequestResponse getRequestById(@PathVariable Long requestId) throws RequestException {
+    public RequestsViewDetails getRequestById(@PathVariable Long requestId) throws RequestException {
         return requestService.getRequestById(requestId);
     }
 
     @GetMapping("/requestor/{cdsId}")
-    public List<LCRequestResponse> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
+    public List<RequestsViewDetails> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
         return requestService.getRequestByCdsId(cdsId);
     }
 

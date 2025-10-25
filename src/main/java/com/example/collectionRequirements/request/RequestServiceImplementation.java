@@ -1,7 +1,7 @@
 package com.example.collectionRequirements.request;
 
 
-import com.example.DTOs.LCRequestResponse;
+import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
 import com.example.department.Department;
@@ -13,7 +13,6 @@ import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,23 +51,23 @@ public class RequestServiceImplementation implements RequestService {
 
         return requestRepository.save(newRequest);
     }
-    public LCRequestResponse getRequestById(long requestId) throws RequestException {
+    public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
                 .orElseThrow(()->new RequestException("Request Not Found"));
 
-        LCRequestResponse lcRequestResponse = new LCRequestResponse();
+        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
 
-        lcRequestResponse.setRequestId(fetchedRequest.getRequestId());
-        lcRequestResponse.setRequestStatus(fetchedRequest.getRequestStatus());
-        lcRequestResponse.setRequestDate(fetchedRequest.getRequestDate());
+        requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
+        requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
+        requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
         if(fetchedRequest.getDepartment()!=null)
-            lcRequestResponse.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
-        lcRequestResponse.setJustification(fetchedRequest.getJustification());
+            requestsViewDetails.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
+        requestsViewDetails.setJustification(fetchedRequest.getJustification());
         if(fetchedRequest.getEvent()!=null)
-            lcRequestResponse.setEventName(fetchedRequest.getEvent().getEventName());
-        lcRequestResponse.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
+            requestsViewDetails.setEventName(fetchedRequest.getEvent().getEventName());
+        requestsViewDetails.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
 
-        return lcRequestResponse;
+        return requestsViewDetails;
     }
     public List<Request> getAllRequests() throws RequestException
     {
@@ -80,7 +79,7 @@ public class RequestServiceImplementation implements RequestService {
     }
 
     @Override
-    public List<LCRequestResponse> getRequestByCdsId(String cdsId) throws UserException, RequestException {
+    public List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException {
         Optional<UserInfo> fetchedUser = userRepository.findByCdsID(cdsId);
 
         if(fetchedUser.isEmpty())
@@ -94,21 +93,21 @@ public class RequestServiceImplementation implements RequestService {
         return fetchedRequests
             .stream()
             .map((request)->{
-                LCRequestResponse lcRequestResponse = new LCRequestResponse();
+                RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
 
-                lcRequestResponse.setRequestId(request.getRequestId());
-                lcRequestResponse.setRequestStatus(request.getRequestStatus());
-                lcRequestResponse.setRequestDate(request.getRequestDate());
+                requestsViewDetails.setRequestId(request.getRequestId());
+                requestsViewDetails.setRequestStatus(request.getRequestStatus());
+                requestsViewDetails.setRequestDate(request.getRequestDate());
                 if(request.getDepartment()!=null)
-                    lcRequestResponse.setDepartment(request.getDepartment().getDepartmentName());
+                    requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
                 if(request.getEvent()!=null)
-                    lcRequestResponse.setEventName(request.getEvent().getEventName());
+                    requestsViewDetails.setEventName(request.getEvent().getEventName());
                 else
-                    lcRequestResponse.setEventName("EventNotCreated");
-                lcRequestResponse.setJustification(request.getJustification());
-                lcRequestResponse.setNoOfParticipants(request.getNoOfParticipants());
+                    requestsViewDetails.setEventName("EventNotCreated");
+                requestsViewDetails.setJustification(request.getJustification());
+                requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
 
-                return lcRequestResponse;
+                return requestsViewDetails;
             }).toList();
     }
 
