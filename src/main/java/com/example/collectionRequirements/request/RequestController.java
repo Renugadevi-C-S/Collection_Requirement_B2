@@ -35,10 +35,6 @@ public class RequestController {
         return requestService.getAllRequests();
     }
 
-    @GetMapping("/{requestId}")
-    public RequestsViewDetails getRequestById(@PathVariable Long requestId) throws RequestException {
-        return requestService.getRequestById(requestId);
-    }
 
     @GetMapping("/requestor/{cdsId}")
     public List<RequestsViewDetails> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
