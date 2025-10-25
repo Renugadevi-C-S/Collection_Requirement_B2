@@ -57,7 +57,7 @@ public class UserServiceImplementation implements UserService {
         if(fetchedUser == null) {
             throw new UserException("User not found with id: " + logInRequest.getCdsId());
         }
-        logInResponse.setCsdId(fetchedUser.getCdsID());
+        logInResponse.setCdsId(fetchedUser.getCdsID());
         logInResponse.setMessage("Valid User");
         logInResponse.setRole(fetchedUser.getRole());
         logInResponse.setFirstName(fetchedUser.getFirstName());

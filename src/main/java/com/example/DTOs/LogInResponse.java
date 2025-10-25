@@ -3,7 +3,7 @@ package com.example.DTOs;
 public class LogInResponse {
 
     private String message;
-    private String csdId;
+    private String cdsId;
     private String role;
     private String firstName;
     private String lastName;
@@ -26,7 +26,7 @@ public class LogInResponse {
 
     public LogInResponse(String message, String csdId, String role) {
         this.message = message;
-        this.csdId = csdId;
+        this.cdsId = csdId;
         this.role = role;
     }
 
@@ -42,12 +42,12 @@ public class LogInResponse {
         this.message = message;
     }
 
-    public String getCsdId() {
-        return csdId;
+    public String getCdsId() {
+        return cdsId;
     }
 
-    public void setCsdId(String csdId) {
-        this.csdId = csdId;
+    public void setCdsId(String csdId) {
+        this.cdsId = csdId;
     }
 
     public String getRole() {

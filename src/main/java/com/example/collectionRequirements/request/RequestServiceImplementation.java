@@ -121,18 +121,18 @@ public class RequestServiceImplementation implements RequestService {
 
         newRequest.setRequestor(requestor);
 
-        Department department = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDeptName());
-        if(department == null)
-            throw new DepartmentException("Department not found for name: "+requestDetails.getDeptName());
+        Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDepartment());
+        if(fetchedDepartment == null)
+            throw new DepartmentException("Department not found for name: "+requestDetails.getDepartment());
 
-        newRequest.setDepartment(department);
+        newRequest.setDepartment(fetchedDepartment);
         newRequest.setRequestDate(LocalDate.now());
         newRequest.setGroupRequest(requestDetails.getNoOfParticipants() >= 10);
         newRequest.setNoOfParticipants(requestDetails.getNoOfParticipants());
         newRequest.setRequestStatus("Submitted");
         newRequest.setJustification(requestDetails.getJustification());
         newRequest.setTAN_Number(requestDetails.getTanNo());
-        newRequest.setCurriculumLink(requestDetails.getCurriculumLink());
+        newRequest.setCurriculumLink(requestDetails.getCurriculum());
 
         requestRepository.save(newRequest);
 
