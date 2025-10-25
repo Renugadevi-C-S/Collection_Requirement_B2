@@ -5,14 +5,23 @@ public class LogInResponse {
     private String message;
     private String csdId;
     private String role;
-    private String userName;
+    private String fristName;
+    private String lastName;
 
-    public String getUserName() {
-        return userName;
+    public String getFristName() {
+        return fristName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setFristName(String fristName) {
+        this.fristName = fristName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public LogInResponse(String message, String csdId, String role) {
