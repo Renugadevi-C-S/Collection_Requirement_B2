@@ -18,7 +18,7 @@ public class Request {
     @GeneratedValue
     private Long requestId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     @JsonIgnore
     private UserInfo requestor;
