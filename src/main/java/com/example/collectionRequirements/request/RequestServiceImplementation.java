@@ -1,7 +1,9 @@
 package com.example.collectionRequirements.request;
 
 
-import com.example.DTOs.LCRequestResponse;
+import com.example.DTOs.RequestsViewDetails;
+import com.example.DTOs.RequestDetails;
+import com.example.DTOs.RequestSubmitResponse;
 import com.example.department.Department;
 import com.example.department.DepartmentException;
 import com.example.department.DepartmentRepository;
@@ -11,7 +13,6 @@ import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,47 +31,24 @@ public class RequestServiceImplementation implements RequestService {
         this.departmentRepository = departmentRepository;
     }
 
-    public Request createRequest(Request newRequest, String requestorCdsId, String deptName) throws RequestException
-    {
-        newRequest.setRequestDate(LocalDate.now());
-        newRequest.setRequestStatus("Submitted");
-        newRequest.setGroupRequest(newRequest.getNoOfParticipants() >= 10);
 
-        Department fetchDept = departmentRepository.findByDepartmentNameIgnoreCase(deptName);
-        if(fetchDept == null)
-            throw new DepartmentException("Department not found for "+deptName);
-
-        Optional<UserInfo> requestor = userRepository.findByCdsID(requestorCdsId);
-
-        if(requestor.isEmpty())
-            throw new UserException("No user or requestor found for "+requestorCdsId);
-
-        if(!requestor.get().getRole().equals("LC") &&
-                !requestor.get().getRole().equals("L&DSPoC"))
-            throw new RequestException("Only LC requestors can be requested for LC");
-
-        newRequest.setRequestor(requestor.get());
-        newRequest.setDepartment(fetchDept);
-
-        return requestRepository.save(newRequest);
-    }
-    public LCRequestResponse getRequestById(long requestId) throws RequestException {
+    public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
                 .orElseThrow(()->new RequestException("Request Not Found"));
 
-        LCRequestResponse lcRequestResponse = new LCRequestResponse();
+        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
 
-        lcRequestResponse.setRequestId(fetchedRequest.getRequestId());
-        lcRequestResponse.setRequestStatus(fetchedRequest.getRequestStatus());
-        lcRequestResponse.setRequestDate(fetchedRequest.getRequestDate());
+        requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
+        requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
+        requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
         if(fetchedRequest.getDepartment()!=null)
-            lcRequestResponse.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
-        lcRequestResponse.setJustification(fetchedRequest.getJustification());
+            requestsViewDetails.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
+        requestsViewDetails.setJustification(fetchedRequest.getJustification());
         if(fetchedRequest.getEvent()!=null)
-            lcRequestResponse.setEventName(fetchedRequest.getEvent().getEventName());
-        lcRequestResponse.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
+            requestsViewDetails.setEventName(fetchedRequest.getEvent().getEventName());
+        requestsViewDetails.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
 
-        return lcRequestResponse;
+        return requestsViewDetails;
     }
     public List<Request> getAllRequests() throws RequestException
     {
@@ -82,7 +60,7 @@ public class RequestServiceImplementation implements RequestService {
     }
 
     @Override
-    public List<LCRequestResponse> getRequestByCdsId(String cdsId) throws UserException, RequestException {
+    public List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException {
         Optional<UserInfo> fetchedUser = userRepository.findByCdsID(cdsId);
 
         if(fetchedUser.isEmpty())
@@ -96,20 +74,49 @@ public class RequestServiceImplementation implements RequestService {
         return fetchedRequests
             .stream()
             .map((request)->{
-                LCRequestResponse lcRequestResponse = new LCRequestResponse();
+                RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
 
-                lcRequestResponse.setRequestId(request.getRequestId());
-                lcRequestResponse.setRequestStatus(request.getRequestStatus());
-                lcRequestResponse.setRequestDate(request.getRequestDate());
+                requestsViewDetails.setRequestId(request.getRequestId());
+                requestsViewDetails.setRequestStatus(request.getRequestStatus());
+                requestsViewDetails.setRequestDate(request.getRequestDate());
                 if(request.getDepartment()!=null)
-                    lcRequestResponse.setDepartment(request.getDepartment().getDepartmentName());
+                    requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
                 if(request.getEvent()!=null)
-                    lcRequestResponse.setEventName(request.getEvent().getEventName());
-                lcRequestResponse.setJustification(request.getJustification());
-                lcRequestResponse.setNoOfParticipants(request.getNoOfParticipants());
+                    requestsViewDetails.setEventName(request.getEvent().getEventName());
+                else
+                    requestsViewDetails.setEventName("EventNotCreated");
+                requestsViewDetails.setJustification(request.getJustification());
+                requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
 
-                return lcRequestResponse;
+                return requestsViewDetails;
             }).toList();
+    }
+
+    @Override
+    public RequestSubmitResponse submitNewRequest(RequestDetails requestDetails) throws UserException, DepartmentException {
+        Request newRequest = new Request();
+
+        UserInfo requestor = userRepository.findByCdsID(requestDetails.getRequestorId())
+                .orElseThrow(()->new UserException("User not found for cdsId: "+requestDetails.getRequestorId()));
+
+        newRequest.setRequestor(requestor);
+
+        Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDepartment());
+        if(fetchedDepartment == null)
+            throw new DepartmentException("Department not found for name: "+requestDetails.getDepartment());
+
+        newRequest.setDepartment(fetchedDepartment);
+        newRequest.setRequestDate(LocalDate.now());
+        newRequest.setGroupRequest(requestDetails.getNoOfParticipants() >= 10);
+        newRequest.setNoOfParticipants(requestDetails.getNoOfParticipants());
+        newRequest.setRequestStatus("Submitted");
+        newRequest.setJustification(requestDetails.getJustification());
+        newRequest.setTAN_Number(requestDetails.getTanNo());
+        newRequest.setCurriculumLink(requestDetails.getCurriculum());
+
+        requestRepository.save(newRequest);
+
+        return new RequestSubmitResponse("New Request Submitted Successfully ");
     }
 
 

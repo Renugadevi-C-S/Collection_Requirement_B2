@@ -3,21 +3,30 @@ package com.example.DTOs;
 public class LogInResponse {
 
     private String message;
-    private String csdId;
+    private String cdsId;
     private String role;
-    private String userName;
+    private String firstName;
+    private String lastName;
 
-    public String getUserName() {
-        return userName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public LogInResponse(String message, String csdId, String role) {
         this.message = message;
-        this.csdId = csdId;
+        this.cdsId = csdId;
         this.role = role;
     }
 
@@ -33,12 +42,12 @@ public class LogInResponse {
         this.message = message;
     }
 
-    public String getCsdId() {
-        return csdId;
+    public String getCdsId() {
+        return cdsId;
     }
 
-    public void setCsdId(String csdId) {
-        this.csdId = csdId;
+    public void setCdsId(String csdId) {
+        this.cdsId = csdId;
     }
 
     public String getRole() {

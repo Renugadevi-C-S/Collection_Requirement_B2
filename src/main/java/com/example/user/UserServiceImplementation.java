@@ -2,6 +2,13 @@ package com.example.user;
 
 import com.example.DTOs.LogInRequest;
 import com.example.DTOs.LogInResponse;
+import com.example.DTOs.NewUserInfo;
+import com.example.department.Department;
+import com.example.department.DepartmentException;
+import com.example.department.DepartmentRepository;
+import com.example.region.Region;
+import com.example.region.RegionException;
+import com.example.region.RegionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +19,41 @@ import java.util.Optional;
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
+    private final RegionRepository regionRepository;
 
     @Autowired
-    public UserServiceImplementation(UserRepository userRepository) {
+    public UserServiceImplementation(UserRepository userRepository, DepartmentRepository departmentRepository, RegionRepository regionRepository) {
         this.userRepository = userRepository;
+        this.departmentRepository = departmentRepository;
+        this.regionRepository = regionRepository;
     }
 
 
-    public UserInfo createUser(UserInfo userInfo) {
-        return userRepository.save(userInfo);
+    public UserInfo createUser(NewUserInfo newUserInfo) {
+
+        UserInfo newUser = new UserInfo();
+
+        if(userRepository.existsByCdsID(newUserInfo.getCdsId()))
+            throw new UserException("Username already exists same CDSID");
+
+        Department fetchDepartment = departmentRepository.findByDepartmentNameIgnoreCase(newUserInfo.getDepartment());
+        if(fetchDepartment == null)
+            throw new DepartmentException("Department not found for "+newUserInfo.getDepartment());
+
+        Region fetchRegion = regionRepository.findRegionsByRegionNameIgnoreCase(newUserInfo.getRegion());
+        if(fetchRegion == null)
+            throw new RegionException("Region not found for "+newUserInfo.getRegion());
+
+        newUser.setCdsID(newUserInfo.getCdsId());
+        newUser.setDepartment(fetchDepartment);
+        newUser.setRegion(fetchRegion);
+        newUser.setEmail(newUserInfo.getEmail());
+        newUser.setFirstName(newUserInfo.getFirstName());
+        newUser.setLastName(newUserInfo.getLastName());
+        newUser.setRole(newUserInfo.getRole());
+
+        return userRepository.save(newUser);
     }
 
     public List<UserInfo> getAllUsers() {
@@ -57,10 +90,11 @@ public class UserServiceImplementation implements UserService {
         if(fetchedUser == null) {
             throw new UserException("User not found with id: " + logInRequest.getCdsId());
         }
-        logInResponse.setCsdId(fetchedUser.getCdsID());
+        logInResponse.setCdsId(fetchedUser.getCdsID());
         logInResponse.setMessage("Valid User");
         logInResponse.setRole(fetchedUser.getRole());
-        logInResponse.setUserName(fetchedUser.getFirstName()+ " "+fetchedUser.getLastName());
+        logInResponse.setFirstName(fetchedUser.getFirstName());
+        logInResponse.setLastName(fetchedUser.getLastName());
 
         return logInResponse;
     }

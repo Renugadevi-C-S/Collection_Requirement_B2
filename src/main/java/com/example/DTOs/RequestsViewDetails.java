@@ -2,7 +2,7 @@ package com.example.DTOs;
 
 import java.time.LocalDate;
 
-public class LCRequestResponse {
+public class RequestsViewDetails {
 
     private Long RequestId;
     private String department;
