@@ -23,7 +23,7 @@ public class RequestServiceImplementation implements RequestService {
 
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
-    private RequestRepository requestRepository;
+    private final RequestRepository requestRepository;
 
     @Autowired
     public RequestServiceImplementation(RequestRepository requestRepository, UserRepository userRepository, DepartmentRepository departmentRepository)
@@ -185,10 +185,6 @@ public class RequestServiceImplementation implements RequestService {
             existingRequest.setCurriculumLink(requestUpdateDetails.getCurriculum());
         }
 
-        // Update request status if provided
-        if (requestUpdateDetails.getRequestStatus() != null) {
-            existingRequest.setRequestStatus(requestUpdateDetails.getRequestStatus());
-        }
 
         // Save updated request
         requestRepository.save(existingRequest);
