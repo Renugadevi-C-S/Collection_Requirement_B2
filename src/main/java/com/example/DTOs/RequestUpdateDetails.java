@@ -1,6 +1,6 @@
 package com.example.DTOs;
 
-public class RequestUpdate {
+public class RequestUpdateDetails {
 
 
         private String department;
@@ -8,7 +8,7 @@ public class RequestUpdate {
         private String tanNo;
         private Integer noOfParticipants;
         private String curriculum;
-        private String requestStatus;
+
 
         public String getDepartment() {
             return department;
@@ -49,14 +49,6 @@ public class RequestUpdate {
         public void setCurriculum(String curriculum) {
             this.curriculum = curriculum;
         }
-
-        public String getRequestStatus() {
-            return requestStatus;
-        }
-
-        public void setRequestStatus(String requestStatus) {
-            this.requestStatus = requestStatus;
-        }
-
+        
 
 }
