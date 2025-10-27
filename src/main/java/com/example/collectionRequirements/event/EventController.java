@@ -1,5 +1,8 @@
 package com.example.collectionRequirements.event;
 
+import com.example.DTOs.EventDetails;
+import com.example.DTOs.EventSubmitResponse;
+import com.example.DTOs.EventViewDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +26,10 @@ public class EventController {
     }
 
     @PostMapping("/newEvent")
-    public ResponseEntity<?> createEvent(@RequestBody Event newEvent) {
+    public ResponseEntity<?> createEvent(@RequestBody EventDetails eventDetails) {
         try {
-            Event createdEvent = eventService.createEvent(newEvent);
-            return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
+            EventSubmitResponse response = eventService.createEvent(eventDetails);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -35,7 +38,7 @@ public class EventController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllEvents() {
         try {
-            List<Event> events = eventService.getAllEvents();
+            List<EventViewDetails> events = eventService.getAllEvents();
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -45,7 +48,7 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<?> getEventById(@PathVariable Long eventId) {
         try {
-            Event event = eventService.getEventById(eventId);
+            EventViewDetails event = eventService.getEventById(eventId);
             return new ResponseEntity<>(event, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -53,10 +56,10 @@ public class EventController {
     }
 
     @PatchMapping("/editEvent/{eventId}")
-    public ResponseEntity<?> editEvent(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
+    public ResponseEntity<?> editEvent(@PathVariable Long eventId, @RequestBody EventDetails eventDetails) {
         try {
-            Event event = eventService.editEvent(eventId, updatedEvent);
-            return new ResponseEntity<>(event, HttpStatus.OK);
+            EventSubmitResponse response = eventService.editEvent(eventId, eventDetails);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -65,8 +68,8 @@ public class EventController {
     @DeleteMapping("/{eventId}")
     public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) {
         try {
-            eventService.deleteEvent(eventId);
-            return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
+            EventSubmitResponse response = eventService.deleteEvent(eventId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -75,7 +78,7 @@ public class EventController {
     @GetMapping("/status/{status}")
     public ResponseEntity<?> getEventsByStatus(@PathVariable String status) {
         try {
-            List<Event> events = eventService.getEventsByStatus(status);
+            List<EventViewDetails> events = eventService.getEventsByStatus(status);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -85,7 +88,7 @@ public class EventController {
     @GetMapping("/type/{eventType}")
     public ResponseEntity<?> getEventsByType(@PathVariable String eventType) {
         try {
-            List<Event> events = eventService.getEventsByType(eventType);
+            List<EventViewDetails> events = eventService.getEventsByType(eventType);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

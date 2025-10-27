@@ -1,20 +1,25 @@
 package com.example.collectionRequirements.event;
+
+import com.example.DTOs.EventDetails;
+import com.example.DTOs.EventSubmitResponse;
+import com.example.DTOs.EventViewDetails;
+
 import java.util.List;
 
 public interface EventService {
 
-    Event createEvent(Event newEvent) throws EventException;
+    EventSubmitResponse createEvent(EventDetails eventDetails) throws EventException;
 
-    Event getEventById(Long eventId) throws EventException;
+    EventViewDetails getEventById(Long eventId) throws EventException;
 
-    List<Event> getAllEvents() throws EventException;
+    List<EventViewDetails> getAllEvents() throws EventException;
 
-    Event editEvent(Long eventId, Event updateEvent) throws EventException;
+    EventSubmitResponse editEvent(Long eventId, EventDetails eventDetails) throws EventException;
 
-    void deleteEvent(Long eventId) throws EventException;
+    EventSubmitResponse deleteEvent(Long eventId) throws EventException;
 
-    List<Event> getEventsByStatus(String status) throws EventException;
+    List<EventViewDetails> getEventsByStatus(String status) throws EventException;
 
-    List<Event> getEventsByType(String eventType) throws EventException;
+    List<EventViewDetails> getEventsByType(String eventType) throws EventException;
 
 }
