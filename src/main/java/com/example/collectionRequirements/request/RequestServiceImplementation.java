@@ -44,6 +44,8 @@ public class RequestServiceImplementation implements RequestService {
         requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
         requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
         requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
+        requestsViewDetails.setCurriculum(fetchedRequest.getCurriculumLink());
+        requestsViewDetails.setTanNo(fetchedRequest.getTAN_Number());
         if(fetchedRequest.getDepartment()!=null)
             requestsViewDetails.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
         requestsViewDetails.setJustification(fetchedRequest.getJustification());
@@ -69,6 +71,8 @@ public class RequestServiceImplementation implements RequestService {
             requestsViewDetails.setRequestStatus(req.getRequestStatus());
             requestsViewDetails.setRequestDate(req.getRequestDate());
             requestsViewDetails.setJustification(req.getJustification());
+            requestsViewDetails.setCurriculum(req.getCurriculumLink());
+            requestsViewDetails.setTanNo(req.getTAN_Number());
             if(req.getDepartment()!=null)
                 requestsViewDetails.setDepartment(req.getDepartment().getDepartmentName());
             if(req.getEvent()!=null)
@@ -106,6 +110,8 @@ public class RequestServiceImplementation implements RequestService {
                 requestsViewDetails.setRequestId(request.getRequestId());
                 requestsViewDetails.setRequestStatus(request.getRequestStatus());
                 requestsViewDetails.setRequestDate(request.getRequestDate());
+                requestsViewDetails.setCurriculum(request.getCurriculumLink());
+                requestsViewDetails.setTanNo(request.getTAN_Number());
                 if(request.getDepartment()!=null)
                     requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
                 if(request.getEvent()!=null)
