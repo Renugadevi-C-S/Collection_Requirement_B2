@@ -30,7 +30,7 @@ public class RequestController {
     }
 
     @GetMapping("/all")
-    public List<Request> getAllRequests() throws RequestException
+    public List<RequestsViewDetails> getAllRequests() throws RequestException
     {
         return requestService.getAllRequests();
     }
@@ -45,6 +45,12 @@ public class RequestController {
     public List<Request> getRequestByStatus(@PathVariable String status) throws RequestException {
         return requestService.getRequestByStatus(status);
     }
+
+//    @PutMapping("/requests/{requestId}")
+//    public RequestSubmitResponse submitRequest(@PathVariable String requestId, @RequestBody RequestDetails requestDetails)
+//    {
+//
+//    }
 
 
 }

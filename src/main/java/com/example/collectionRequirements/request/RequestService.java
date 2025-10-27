@@ -11,7 +11,7 @@ import java.util.List;
 public interface RequestService {
 
     RequestsViewDetails getRequestById(long requestId)throws RequestException;
-    List<Request> getAllRequests()throws RequestException;
+    List<RequestsViewDetails> getAllRequests()throws RequestException;
     List<Request> getRequestByStatus(String status)throws RequestException;
 
     List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException;
