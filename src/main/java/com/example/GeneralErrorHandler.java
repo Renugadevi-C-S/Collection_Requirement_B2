@@ -14,7 +14,7 @@ public class GeneralErrorHandler {
     @ExceptionHandler
     public Map<String,Object> handleException(Exception e, HttpServletRequest request) {
         Map<String,Object> errorMap = new LinkedHashMap<>();
-        errorMap.put("statusCode",400);
+        errorMap.put("status",400);
         errorMap.put("error","Bad Request");
         errorMap.put("exception",e.getClass());
         errorMap.put("message",e.getMessage());
