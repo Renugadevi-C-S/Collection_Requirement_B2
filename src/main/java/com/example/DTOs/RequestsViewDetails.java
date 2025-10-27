@@ -11,6 +11,15 @@ public class RequestsViewDetails {
     private String justification;
     private Integer noOfParticipants;
     private String requestStatus;
+    private String requestedBy;
+
+    public String getRequestedBy() {
+        return requestedBy;
+    }
+
+    public void setRequestedBy(String requestedBy) {
+        this.requestedBy = requestedBy;
+    }
 
     public Long getRequestId() {
         return RequestId;

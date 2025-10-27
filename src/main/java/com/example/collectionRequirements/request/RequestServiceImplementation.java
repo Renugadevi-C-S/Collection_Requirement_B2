@@ -38,6 +38,7 @@ public class RequestServiceImplementation implements RequestService {
 
         RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
 
+        requestsViewDetails.setRequestedBy(fetchedRequest.getRequestor().getCdsID());
         requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
         requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
         requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
