@@ -54,4 +54,9 @@ public class RequestController {
         return requestService.updateRequest(requestId, requestUpdateDetails);
     }
 
+    @GetMapping("/{requestId}")
+    public RequestsViewDetails getRequestById(@PathVariable Long requestId) throws RequestException {
+        return requestService.getRequestById(requestId);
+    }
+
 }
