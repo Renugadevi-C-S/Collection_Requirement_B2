@@ -2,9 +2,12 @@ package com.example.collectionRequirements.request;
 
 
 
+import com.example.DTOs.RequestUpdate;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
+import com.example.department.DepartmentException;
+import com.example.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,11 +49,9 @@ public class RequestController {
         return requestService.getRequestByStatus(status);
     }
 
-//    @PutMapping("/requests/{requestId}")
-//    public RequestSubmitResponse submitRequest(@PathVariable String requestId, @RequestBody RequestDetails requestDetails)
-//    {
-//
-//    }
-
+    @PutMapping("/update/{requestId}")
+    public RequestSubmitResponse updateRequest(@PathVariable Long requestId, @RequestBody RequestUpdate requestUpdateDTO) throws UserException, DepartmentException, RequestException {
+        return requestService.updateRequest(requestId, requestUpdateDTO);
+    }
 
 }

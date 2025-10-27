@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.request;
 
 
+import com.example.DTOs.RequestUpdate;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
@@ -13,6 +14,7 @@ import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,6 +80,8 @@ public class RequestServiceImplementation implements RequestService {
             else
                 requestsViewDetails.setEventName("EventNotCreated");
             requestsViewDetails.setNoOfParticipants(req.getNoOfParticipants());
+            if(req.getRequestor()!=null)
+                requestsViewDetails.setRequestedBy(req.getRequestor().getCdsID());
             return requestsViewDetails;
         }).collect(Collectors.toList());
     }
@@ -146,6 +150,57 @@ public class RequestServiceImplementation implements RequestService {
 
         return new RequestSubmitResponse("New Request Submitted Successfully ");
     }
+
+    @Override
+    public RequestSubmitResponse updateRequest(Long requestId, RequestUpdate requestUpdateDTO) throws UserException, DepartmentException, RequestException {
+
+        // Find existing request
+        Request existingRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestException("Request Not Found with ID: " + requestId));
+
+        // Update department if provided
+        if (requestUpdateDTO.getDepartment() != null && !requestUpdateDTO.getDepartment().isEmpty()) {
+            Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestUpdateDTO.getDepartment());
+            if (fetchedDepartment == null) {
+                throw new DepartmentException("Department not found for name: " + requestUpdateDTO.getDepartment());
+            }
+            existingRequest.setDepartment(fetchedDepartment);
+        }
+
+        // Update justification if provided
+        if (requestUpdateDTO.getJustification() != null) {
+            existingRequest.setJustification(requestUpdateDTO.getJustification());
+        }
+
+        // Update TAN number if provided
+        if (requestUpdateDTO.getTanNo() != null) {
+            existingRequest.setTAN_Number(requestUpdateDTO.getTanNo());
+        }
+
+        // Update number of participants if provided
+        if (requestUpdateDTO.getNoOfParticipants() != null) {
+            existingRequest.setNoOfParticipants(requestUpdateDTO.getNoOfParticipants());
+            // Update group request flag based on participants
+            existingRequest.setGroupRequest(requestUpdateDTO.getNoOfParticipants() >= 10);
+        }
+
+        // Update curriculum link if provided
+        if (requestUpdateDTO.getCurriculum() != null) {
+            existingRequest.setCurriculumLink(requestUpdateDTO.getCurriculum());
+        }
+
+        // Update request status if provided
+        if (requestUpdateDTO.getRequestStatus() != null) {
+            existingRequest.setRequestStatus(requestUpdateDTO.getRequestStatus());
+        }
+
+        // Save updated request
+        requestRepository.save(existingRequest);
+
+        return new RequestSubmitResponse("Request updated successfully");
+    }
+
+
 
 
 }
