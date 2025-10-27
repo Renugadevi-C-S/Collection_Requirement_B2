@@ -13,8 +13,12 @@ import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.stream.LangCollectors.collect;
 
 @Service
 public class RequestServiceImplementation implements RequestService {
@@ -38,6 +42,7 @@ public class RequestServiceImplementation implements RequestService {
 
         RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
 
+        requestsViewDetails.setRequestedBy(fetchedRequest.getRequestor().getCdsID());
         requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
         requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
         requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
@@ -50,9 +55,31 @@ public class RequestServiceImplementation implements RequestService {
 
         return requestsViewDetails;
     }
-    public List<Request> getAllRequests() throws RequestException
+    public List<RequestsViewDetails> getAllRequests() throws RequestException
     {
-        return requestRepository.findAll();
+        List<Request> requestList=requestRepository.findAll();
+
+        if(requestList.isEmpty())
+        {
+            throw new RequestException("Request Not Found");
+        }
+
+        return requestList.stream().map(req->{
+
+            RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
+            requestsViewDetails.setRequestId(req.getRequestId());
+            requestsViewDetails.setRequestStatus(req.getRequestStatus());
+            requestsViewDetails.setRequestDate(req.getRequestDate());
+            requestsViewDetails.setJustification(req.getJustification());
+            if(req.getDepartment()!=null)
+                requestsViewDetails.setDepartment(req.getDepartment().getDepartmentName());
+            if(req.getEvent()!=null)
+                requestsViewDetails.setEventName(req.getEvent().getEventName());
+            else
+                requestsViewDetails.setEventName("EventNotCreated");
+            requestsViewDetails.setNoOfParticipants(req.getNoOfParticipants());
+            return requestsViewDetails;
+        }).collect(Collectors.toList());
     }
     public List<Request> getRequestByStatus(String status) throws RequestException
     {
@@ -104,6 +131,7 @@ public class RequestServiceImplementation implements RequestService {
         Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDepartment());
         if(fetchedDepartment == null)
             throw new DepartmentException("Department not found for name: "+requestDetails.getDepartment());
+
 
         newRequest.setDepartment(fetchedDepartment);
         newRequest.setRequestDate(LocalDate.now());

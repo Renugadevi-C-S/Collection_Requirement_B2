@@ -1,5 +1,7 @@
 package com.example.collectionRequirements.request;
 
+
+
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
@@ -20,16 +22,19 @@ public class RequestController {
         this.requestService = requestService;
     }
 
+
+
     @PostMapping("/newRequest")
     public RequestSubmitResponse submitNewRequest(@RequestBody RequestDetails requestDetails) {
         return requestService.submitNewRequest(requestDetails);
     }
 
     @GetMapping("/all")
-    public List<Request> getAllRequests() throws RequestException
+    public List<RequestsViewDetails> getAllRequests() throws RequestException
     {
         return requestService.getAllRequests();
     }
+
 
     @GetMapping("/requestor/{cdsId}")
     public List<RequestsViewDetails> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
@@ -40,6 +45,12 @@ public class RequestController {
     public List<Request> getRequestByStatus(@PathVariable String status) throws RequestException {
         return requestService.getRequestByStatus(status);
     }
+
+//    @PutMapping("/requests/{requestId}")
+//    public RequestSubmitResponse submitRequest(@PathVariable String requestId, @RequestBody RequestDetails requestDetails)
+//    {
+//
+//    }
 
 
 }
