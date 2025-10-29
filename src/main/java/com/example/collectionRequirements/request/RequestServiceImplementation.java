@@ -1,7 +1,6 @@
 package com.example.collectionRequirements.request;
 
 
-import com.example.DTOs.RequestUpdateDetails;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
@@ -154,7 +153,7 @@ public class RequestServiceImplementation implements RequestService {
     }
 
     @Override
-    public RequestSubmitResponse updateRequest(Long requestId, RequestUpdateDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
+    public RequestSubmitResponse updateRequest(Long requestId, RequestsViewDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
 
         // Find existing request
         Request existingRequest = requestRepository.findById(requestId)

@@ -1,6 +1,5 @@
 package com.example.collectionRequirements.request;
 
-import com.example.DTOs.RequestUpdateDetails;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
@@ -18,5 +17,5 @@ public interface RequestService {
     List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException;
 
     RequestSubmitResponse submitNewRequest(RequestDetails requestDetails) throws UserException, DepartmentException;
-    RequestSubmitResponse updateRequest(Long requestId, RequestUpdateDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException;
+    RequestSubmitResponse updateRequest(Long requestId, RequestsViewDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException;
 }

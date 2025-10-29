@@ -2,7 +2,6 @@ package com.example.collectionRequirements.request;
 
 
 
-import com.example.DTOs.RequestUpdateDetails;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
@@ -50,8 +49,8 @@ public class RequestController {
     }
 
     @PutMapping("/update/{requestId}")
-    public RequestSubmitResponse updateRequest(@PathVariable Long requestId, @RequestBody RequestUpdateDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
-        return requestService.updateRequest(requestId, requestUpdateDetails);
+    public RequestSubmitResponse updateRequest(@PathVariable Long requestId, @RequestBody RequestsViewDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException {
+        return requestService.updateRequest(requestId, requestsUpdateDetails);
     }
 
     @GetMapping("/{requestId}")
