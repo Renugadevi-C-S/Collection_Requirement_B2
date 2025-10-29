@@ -3,7 +3,6 @@ package com.example.DTOs;
 public class EventDetails {
     private String eventName;
     private String description;
-    private Integer participantsCount;
     private Integer duration;
     private String eventType;
     private String fundingSource;
@@ -23,14 +22,6 @@ public class EventDetails {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getParticipantsCount() {
-        return participantsCount;
-    }
-
-    public void setParticipantsCount(Integer participantsCount) {
-        this.participantsCount = participantsCount;
     }
 
     public Integer getDuration() {
