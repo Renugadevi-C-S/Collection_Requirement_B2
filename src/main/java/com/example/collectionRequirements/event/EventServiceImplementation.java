@@ -3,8 +3,8 @@ package com.example.collectionRequirements.event;
 import com.example.DTOs.EventDetails;
 import com.example.DTOs.EventSubmitResponse;
 import com.example.DTOs.EventViewDetails;
-import com.example.DTOs.RequestsViewDetails;
-import com.example.collectionRequirements.request.Request;
+import com.example.user.UserInfo;
+import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,26 +16,33 @@ import java.util.stream.Collectors;
 public class EventServiceImplementation implements EventService {
 
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public EventServiceImplementation(EventRepository eventRepository) {
+    public EventServiceImplementation(EventRepository eventRepository, UserRepository userRepository) {
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public EventSubmitResponse createEvent(EventDetails eventDetails) throws EventException {
+    public EventSubmitResponse createEvent(EventDetails eventDetails, String cdsId) throws EventException {
         if (eventDetails.getEventName() == null || eventDetails.getEventName().trim().isEmpty()) {
             throw new EventException("Event name cannot be empty.");
+        }
+
+        Optional<UserInfo> creator = userRepository.findByCdsID(cdsId);
+        if (creator.isEmpty()) {
+            throw new EventException("User with cdsID " + cdsId + " not found");
         }
 
         Event newEvent = new Event();
         newEvent.setEventName(eventDetails.getEventName());
         newEvent.setDescription(eventDetails.getDescription());
-        newEvent.setParticipantsCount(eventDetails.getParticipantsCount());
         newEvent.setDuration(eventDetails.getDuration());
         newEvent.setEventType(eventDetails.getEventType());
         newEvent.setFundingSource(eventDetails.getFundingSource());
         newEvent.setStatus(eventDetails.getStatus());
+        newEvent.setCreatedBy(creator.get());
 
         eventRepository.save(newEvent);
 
@@ -78,9 +85,6 @@ public class EventServiceImplementation implements EventService {
         }
         if (eventDetails.getDescription() != null) {
             existingEvent.setDescription(eventDetails.getDescription());
-        }
-        if (eventDetails.getParticipantsCount() != null) {
-            existingEvent.setParticipantsCount(eventDetails.getParticipantsCount());
         }
         if (eventDetails.getDuration() != null) {
             existingEvent.setDuration(eventDetails.getDuration());
@@ -143,41 +147,18 @@ public class EventServiceImplementation implements EventService {
                 .collect(Collectors.toList());
     }
 
-    //map Event entity to EventViewDetails
     private EventViewDetails mapToEventViewDetails(Event event) {
         EventViewDetails eventViewDetails = new EventViewDetails();
         eventViewDetails.setEventId(event.getEventId());
         eventViewDetails.setEventName(event.getEventName());
-        eventViewDetails.setParticipantsCount(event.getParticipantsCount());
         eventViewDetails.setDuration(event.getDuration());
         eventViewDetails.setEventType(event.getEventType());
         eventViewDetails.setStatus(event.getStatus());
 
-        if (event.getRequests() != null && !event.getRequests().isEmpty()) {
-            List<RequestsViewDetails> requestsList = event.getRequests().stream()
-                    .map(this::mapToRequestsViewDetails)
-                    .collect(Collectors.toList());
-            eventViewDetails.setRequests(requestsList);
+        if (event.getCreatedBy() != null) {
+            eventViewDetails.setCreatedBy(event.getCreatedBy().getCdsID());
         }
+
         return eventViewDetails;
-    }
-
-    //map Request entity to RequestsViewDetails DTO
-    private RequestsViewDetails mapToRequestsViewDetails(Request request) {
-        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-        requestsViewDetails.setRequestId(request.getRequestId());
-        requestsViewDetails.setRequestStatus(request.getRequestStatus());
-        requestsViewDetails.setRequestDate(request.getRequestDate());
-
-        if (request.getDepartment() != null) {
-            requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
-        }
-
-        if (request.getEvent() != null) {
-            requestsViewDetails.setEventName(request.getEvent().getEventName());
-        }
-        requestsViewDetails.setJustification(request.getJustification());
-        requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
-        return requestsViewDetails;
     }
 }
