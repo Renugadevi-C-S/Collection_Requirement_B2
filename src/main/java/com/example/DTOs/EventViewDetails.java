@@ -1,15 +1,12 @@
 package com.example.DTOs;
 
-import java.util.List;
-
 public class EventViewDetails {
     private Long eventId;
     private String eventName;
-    private Integer participantsCount;
     private Integer duration;
     private String eventType;
     private String status;
-    private List<RequestsViewDetails> requests;
+    private String createdBy;
 
     public Long getEventId() {
         return eventId;
@@ -35,14 +32,6 @@ public class EventViewDetails {
         this.duration = duration;
     }
 
-    public Integer getParticipantsCount() {
-        return participantsCount;
-    }
-
-    public void setParticipantsCount(Integer participantsCount) {
-        this.participantsCount = participantsCount;
-    }
-
     public String getEventType() {
         return eventType;
     }
@@ -59,11 +48,11 @@ public class EventViewDetails {
         this.status = status;
     }
 
-    public List<RequestsViewDetails> getRequests() {
-        return requests;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setRequests(List<RequestsViewDetails> requests) {
-        this.requests = requests;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }
