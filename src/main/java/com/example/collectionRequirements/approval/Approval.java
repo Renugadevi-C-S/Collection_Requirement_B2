@@ -19,7 +19,7 @@ public class Approval {
     @JsonIgnore
     private Request request;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     @JsonIgnore
     private UserInfo approvedBy;

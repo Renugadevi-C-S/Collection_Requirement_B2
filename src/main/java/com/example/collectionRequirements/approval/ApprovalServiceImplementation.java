@@ -29,7 +29,7 @@ public class ApprovalServiceImplementation implements ApprovalService {
     @Override
     public ApprovalSubmissionResponse addApprovalWithRequestId(NewApprovalDetails newApprovalDetails) throws RequestException {
 
-        Approval newApproval = new Approval();
+
 
         Request associatedRequest = requestRepository.findById(newApprovalDetails.getRequestId())
                 .orElseThrow(() -> new RequestException("Request with ID " + newApprovalDetails.getRequestId() + " not found."));
@@ -37,6 +37,13 @@ public class ApprovalServiceImplementation implements ApprovalService {
         UserInfo approver = userRepository.findByCdsID(newApprovalDetails.getApprovedBy())
                 .orElseThrow(() -> new UserException("User with CDS ID " + newApprovalDetails.getApprovedBy() + " not found."));
 
+        Approval newApproval;
+
+        if(associatedRequest.getApproval() != null) {
+            newApproval = associatedRequest.getApproval();
+        } else {
+            newApproval = new Approval();
+        }
         newApproval.setRequest(associatedRequest);
         newApproval.setApprovalStatus(newApprovalDetails.getApprovalStatus());
         newApproval.setApprovalNotes(newApprovalDetails.getApprovalNotes());
@@ -44,8 +51,11 @@ public class ApprovalServiceImplementation implements ApprovalService {
         newApproval.setApprovedBy(approver);
 
         associatedRequest.setApproval(newApproval);
+        associatedRequest.setRequestStatus(newApprovalDetails.getApprovalStatus());
 
         approvalRepository.save(newApproval);
+        requestRepository.save(associatedRequest);
+
 
         return new ApprovalSubmissionResponse(newApprovalDetails.getApprovalStatus() + " request with ID " + newApprovalDetails.getRequestId() + " successfully.");
     }
