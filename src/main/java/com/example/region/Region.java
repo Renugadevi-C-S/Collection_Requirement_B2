@@ -2,11 +2,7 @@ package com.example.region;
 
 import com.example.user.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Future;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -53,7 +49,7 @@ public class Region {
         this.users = users;
     }
 
-    @OneToMany(mappedBy = "region")
+    @OneToMany(mappedBy = "region", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<UserInfo> users;
 

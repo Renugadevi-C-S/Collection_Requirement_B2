@@ -19,7 +19,7 @@ public class Approval {
     @JsonIgnore
     private Request request;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonIgnore
     private UserInfo approvedBy;
