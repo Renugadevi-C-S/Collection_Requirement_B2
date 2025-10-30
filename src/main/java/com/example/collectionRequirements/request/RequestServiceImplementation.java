@@ -32,32 +32,55 @@ public class RequestServiceImplementation implements RequestService {
         this.departmentRepository = departmentRepository;
     }
 
+    /**
+     * Helper method to convert Request entity to RequestsViewDetails DTO
+     * Ensures all fields are properly set with null checks
+     */
+    private RequestsViewDetails convertToRequestsViewDetails(Request request) {
+        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
+
+        requestsViewDetails.setRequestId(request.getRequestId());
+        requestsViewDetails.setRequestStatus(request.getRequestStatus());
+        requestsViewDetails.setRequestDate(request.getRequestDate());
+        requestsViewDetails.setCurriculum(request.getCurriculumLink());
+        requestsViewDetails.setTanNo(request.getTAN_Number());
+        requestsViewDetails.setJustification(request.getJustification());
+        requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
+
+        // Set requestor
+        if(request.getRequestor() != null)
+            requestsViewDetails.setRequestedBy(request.getRequestor().getCdsID());
+
+        // Set department
+        if(request.getDepartment() != null)
+            requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
+
+        // Set event name
+        if(request.getEvent() != null)
+            requestsViewDetails.setEventName(request.getEvent().getEventName());
+        else
+            requestsViewDetails.setEventName("EventNotCreated");
+
+        // Set approved by
+        if(request.getApproval() != null ){
+            requestsViewDetails.setApprovedBy(request.getApproval().getApprovedBy().getCdsID());
+            requestsViewDetails.setApprovalNotes(request.getApproval().getApprovalNotes());
+        }
+
+        else{
+            requestsViewDetails.setApprovedBy("Not Approved Yet");
+            requestsViewDetails.setApprovalNotes("Not Approved Yet");
+        }
+
+
+        return requestsViewDetails;
+    }
 
     public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
                 .orElseThrow(()->new RequestException("Request Not Found"));
 
-        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-
-        requestsViewDetails.setRequestedBy(fetchedRequest.getRequestor().getCdsID());
-        requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
-        requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
-        requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
-        requestsViewDetails.setCurriculum(fetchedRequest.getCurriculumLink());
-        requestsViewDetails.setTanNo(fetchedRequest.getTAN_Number());
-
-        if(fetchedRequest.getApproval()!=null && fetchedRequest.getApproval().getApprovedBy()!=null)
-            requestsViewDetails.setApprovedBy(fetchedRequest.getApproval().getApprovedBy().getCdsID());
-        else
-            requestsViewDetails.setApprovedBy("Not Approved Yet");
-        if(fetchedRequest.getDepartment()!=null)
-            requestsViewDetails.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
-        requestsViewDetails.setJustification(fetchedRequest.getJustification());
-        if(fetchedRequest.getEvent()!=null)
-            requestsViewDetails.setEventName(fetchedRequest.getEvent().getEventName());
-        requestsViewDetails.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
-
-        return requestsViewDetails;
+        return convertToRequestsViewDetails(fetchedRequest);
     }
     public List<RequestsViewDetails> getAllRequests() throws RequestException
     {
@@ -68,26 +91,9 @@ public class RequestServiceImplementation implements RequestService {
             throw new RequestException("Request Not Found");
         }
 
-        return requestList.stream().map(req->{
-
-            RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-            requestsViewDetails.setRequestId(req.getRequestId());
-            requestsViewDetails.setRequestStatus(req.getRequestStatus());
-            requestsViewDetails.setRequestDate(req.getRequestDate());
-            requestsViewDetails.setJustification(req.getJustification());
-            requestsViewDetails.setCurriculum(req.getCurriculumLink());
-            requestsViewDetails.setTanNo(req.getTAN_Number());
-            if(req.getDepartment()!=null)
-                requestsViewDetails.setDepartment(req.getDepartment().getDepartmentName());
-            if(req.getEvent()!=null)
-                requestsViewDetails.setEventName(req.getEvent().getEventName());
-            else
-                requestsViewDetails.setEventName("EventNotCreated");
-            requestsViewDetails.setNoOfParticipants(req.getNoOfParticipants());
-            if(req.getRequestor()!=null)
-                requestsViewDetails.setRequestedBy(req.getRequestor().getCdsID());
-            return requestsViewDetails;
-        }).collect(Collectors.toList());
+        return requestList.stream()
+                .map(this::convertToRequestsViewDetails)
+                .collect(Collectors.toList());
     }
     public List<Request> getRequestByStatus(String status) throws RequestException
     {
@@ -106,27 +112,9 @@ public class RequestServiceImplementation implements RequestService {
         if(fetchedRequests.isEmpty())
             throw new RequestException("Request Not Found");
 
-        return fetchedRequests
-            .stream()
-            .map((request)->{
-                RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-
-                requestsViewDetails.setRequestId(request.getRequestId());
-                requestsViewDetails.setRequestStatus(request.getRequestStatus());
-                requestsViewDetails.setRequestDate(request.getRequestDate());
-                requestsViewDetails.setCurriculum(request.getCurriculumLink());
-                requestsViewDetails.setTanNo(request.getTAN_Number());
-                if(request.getDepartment()!=null)
-                    requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
-                if(request.getEvent()!=null)
-                    requestsViewDetails.setEventName(request.getEvent().getEventName());
-                else
-                    requestsViewDetails.setEventName("EventNotCreated");
-                requestsViewDetails.setJustification(request.getJustification());
-                requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
-
-                return requestsViewDetails;
-            }).toList();
+        return fetchedRequests.stream()
+                .map(this::convertToRequestsViewDetails)
+                .toList();
     }
 
     @Override
