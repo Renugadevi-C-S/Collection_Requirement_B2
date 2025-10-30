@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface EventService {
 
-    EventSubmitResponse createEvent(EventDetails eventDetails) throws EventException;
+    EventSubmitResponse createEvent(EventDetails eventDetails, String cdsId) throws EventException;
 
     EventViewDetails getEventById(Long eventId) throws EventException;
+
+    List<EventViewDetails> getEventsByCdsID(String cdsID) throws EventException;
 
     List<EventViewDetails> getAllEvents() throws EventException;
 
