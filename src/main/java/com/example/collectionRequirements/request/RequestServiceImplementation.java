@@ -45,6 +45,11 @@ public class RequestServiceImplementation implements RequestService {
         requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
         requestsViewDetails.setCurriculum(fetchedRequest.getCurriculumLink());
         requestsViewDetails.setTanNo(fetchedRequest.getTAN_Number());
+
+        if(fetchedRequest.getApproval()!=null && fetchedRequest.getApproval().getApprovedBy()!=null)
+            requestsViewDetails.setApprovedBy(fetchedRequest.getApproval().getApprovedBy().getCdsID());
+        else
+            requestsViewDetails.setApprovedBy("Not Approved Yet");
         if(fetchedRequest.getDepartment()!=null)
             requestsViewDetails.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
         requestsViewDetails.setJustification(fetchedRequest.getJustification());

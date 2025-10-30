@@ -14,6 +14,15 @@ public class RequestsViewDetails {
     private String requestedBy;
     private String tanNo;
     private String curriculum;
+    private String approvedBy;
+
+    public String getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+    }
 
     public String getTanNo() {
         return tanNo;
