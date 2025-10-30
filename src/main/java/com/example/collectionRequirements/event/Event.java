@@ -35,7 +35,7 @@ public class Event {
 
     @ManyToOne
     @JsonIgnore
-    UserInfo createdBy;
+    private UserInfo createdBy;
 
     public UserInfo getCreatedBy() {
         return createdBy;
