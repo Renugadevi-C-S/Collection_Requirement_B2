@@ -26,9 +26,9 @@ public class EventController {
     }
 
     @PostMapping("/newEvent")
-    public ResponseEntity<?> createEvent(@RequestBody EventDetails eventDetails) {
+    public ResponseEntity<?> createEvent(@RequestBody EventDetails eventDetails, @RequestHeader("cdsID") String cdsID) {
         try {
-            EventSubmitResponse response = eventService.createEvent(eventDetails);
+            EventSubmitResponse response = eventService.createEvent(eventDetails, cdsID);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -50,6 +50,16 @@ public class EventController {
         try {
             EventViewDetails event = eventService.getEventById(eventId);
             return new ResponseEntity<>(event, HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/creator/{cdsID}")
+    public ResponseEntity<?> getEventsByCdsID(@PathVariable String cdsID) {
+        try {
+            List<EventViewDetails> events = eventService.getEventsByCdsID(cdsID);
+            return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
