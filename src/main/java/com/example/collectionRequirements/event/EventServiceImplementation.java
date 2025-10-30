@@ -60,6 +60,20 @@ public class EventServiceImplementation implements EventService {
     }
 
     @Override
+    public List<EventViewDetails> getEventsByCdsID(String cdsID) throws EventException {
+
+        List<Event> findEvents = eventRepository.findByCreatedBy_CdsID(cdsID);
+
+        if (findEvents.isEmpty()) {
+            throw new EventException("No events found for user with cdsID " + cdsID);
+        }
+
+        return findEvents.stream()
+                .map(this::mapToEventViewDetails)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<EventViewDetails> getAllEvents() throws EventException {
         try {
             List<Event> events = eventRepository.findAll();
@@ -79,6 +93,10 @@ public class EventServiceImplementation implements EventService {
         }
 
         Event existingEvent = existingEventOpt.get();
+
+        if (eventDetails.getStatus() != null && "Deleted".equalsIgnoreCase(eventDetails.getStatus())) {
+            throw new EventException("Cannot set status to 'Deleted' through EDIT endpoint. Use Delete endpoint instead.");
+        }
 
         if (eventDetails.getEventName() != null && !eventDetails.getEventName().trim().isEmpty()) {
             existingEvent.setEventName(eventDetails.getEventName());
@@ -106,10 +124,14 @@ public class EventServiceImplementation implements EventService {
 
     @Override
     public EventSubmitResponse deleteEvent(Long eventId) throws EventException {
-        if (!eventRepository.existsById(eventId)) {
+        Optional<Event> eventOpt = eventRepository.findById(eventId);
+        if (eventOpt.isEmpty()) {
             throw new EventException("Event with ID " + eventId + " not found for deletion.");
         }
-        eventRepository.deleteById(eventId);
+
+        Event event = eventOpt.get();
+        event.setStatus("Deleted");
+        eventRepository.save(event);
 
         return new EventSubmitResponse("Event deleted successfully");
     }
@@ -158,7 +180,6 @@ public class EventServiceImplementation implements EventService {
         if (event.getCreatedBy() != null) {
             eventViewDetails.setCreatedBy(event.getCreatedBy().getCdsID());
         }
-
         return eventViewDetails;
     }
 }
