@@ -1,11 +1,9 @@
 package com.example.DTOs;
 
-import java.time.LocalDateTime;
-
 public class NewApprovalDetails {
 
     private Long requestId;
-    private String approvalBy;
+    private String approvedBy;
     private String approvalStatus;
     private String approvalNotes;
 
@@ -17,12 +15,12 @@ public class NewApprovalDetails {
         this.requestId = requestId;
     }
 
-    public String getApprovalBy() {
-        return approvalBy;
+    public String getApprovedBy() {
+        return approvedBy;
     }
 
-    public void setApprovalBy(String approvalBy) {
-        this.approvalBy = approvalBy;
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
     }
 
     public String getApprovalStatus() {

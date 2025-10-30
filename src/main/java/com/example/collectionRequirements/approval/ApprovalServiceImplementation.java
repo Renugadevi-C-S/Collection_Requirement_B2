@@ -11,7 +11,6 @@ import com.example.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 public class ApprovalServiceImplementation implements ApprovalService {
@@ -35,8 +34,8 @@ public class ApprovalServiceImplementation implements ApprovalService {
         Request associatedRequest = requestRepository.findById(newApprovalDetails.getRequestId())
                 .orElseThrow(() -> new RequestException("Request with ID " + newApprovalDetails.getRequestId() + " not found."));
 
-        UserInfo approver = userRepository.findByCdsID(newApprovalDetails.getApprovalBy())
-                .orElseThrow(() -> new UserException("User with CDS ID " + newApprovalDetails.getApprovalBy() + " not found."));
+        UserInfo approver = userRepository.findByCdsID(newApprovalDetails.getApprovedBy())
+                .orElseThrow(() -> new UserException("User with CDS ID " + newApprovalDetails.getApprovedBy() + " not found."));
 
         newApproval.setRequest(associatedRequest);
         newApproval.setApprovalStatus(newApprovalDetails.getApprovalStatus());
