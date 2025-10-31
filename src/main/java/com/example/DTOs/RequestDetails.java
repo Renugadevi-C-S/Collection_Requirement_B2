@@ -6,8 +6,8 @@ public class RequestDetails {
     private String justification;
     private String tanNo;
     private Integer noOfParticipants;
-    private String deptName;
-    private String curriculumLink;
+    private String department;
+    private String curriculum;
 
     public String getRequestorId() {
         return requestorId;
@@ -41,19 +41,19 @@ public class RequestDetails {
         this.noOfParticipants = noOfParticipants;
     }
 
-    public String getDeptName() {
-        return deptName;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
-    public String getCurriculumLink() {
-        return curriculumLink;
+    public String getCurriculum() {
+        return curriculum;
     }
 
-    public void setCurriculumLink(String curriculumLink) {
-        this.curriculumLink = curriculumLink;
+    public void setCurriculum(String curriculum) {
+        this.curriculum = curriculum;
     }
 }

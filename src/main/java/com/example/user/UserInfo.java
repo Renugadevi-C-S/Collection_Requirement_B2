@@ -24,7 +24,7 @@ public class UserInfo {
 
     private String email;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Department department;
 
@@ -110,7 +110,7 @@ public class UserInfo {
         this.department = department;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Region region;
 
@@ -119,7 +119,7 @@ public class UserInfo {
     @JsonIgnore
     private UserInfo manager;
 
-    @ManyToMany(mappedBy = "requestedParticipants")
+    @ManyToMany(mappedBy = "requestedParticipants", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Request> requests;
 

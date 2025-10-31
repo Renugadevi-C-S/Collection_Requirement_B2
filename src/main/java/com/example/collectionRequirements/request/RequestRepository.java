@@ -1,6 +1,5 @@
 package com.example.collectionRequirements.request;
 
-import com.example.DTOs.LCRequestResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

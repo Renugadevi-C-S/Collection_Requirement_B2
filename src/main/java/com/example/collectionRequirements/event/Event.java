@@ -1,13 +1,13 @@
 package com.example.collectionRequirements.event;
 
 import com.example.collectionRequirements.request.Request;
+import com.example.user.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
-@Table(name="Events")
 public class Event {
 
     @Id
@@ -19,7 +19,7 @@ public class Event {
 
     private String description;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Request> requests;
 
@@ -32,6 +32,18 @@ public class Event {
     private String fundingSource;
 
     private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    UserInfo createdBy;
+
+    public UserInfo getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UserInfo createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Long getEventId() {
         return eventId;

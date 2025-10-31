@@ -2,7 +2,11 @@ package com.example.collectionRequirements.request;
 
 
 
-import com.example.DTOs.LCRequestResponse;
+import com.example.DTOs.RequestsViewDetails;
+import com.example.DTOs.RequestDetails;
+import com.example.DTOs.RequestSubmitResponse;
+import com.example.department.DepartmentException;
+import com.example.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,24 +24,22 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @PostMapping("/newRequest/{requestorCdsId}/{deptName}")
-    public Request newRequest(@RequestBody Request newRequest, @PathVariable String requestorCdsId ,@PathVariable String deptName) throws RequestException {
-        return requestService.createRequest(newRequest, requestorCdsId, deptName);
+
+
+    @PostMapping("/newRequest")
+    public RequestSubmitResponse submitNewRequest(@RequestBody RequestDetails requestDetails) {
+        return requestService.submitNewRequest(requestDetails);
     }
 
     @GetMapping("/all")
-    public List<Request> getAllRequests() throws RequestException
+    public List<RequestsViewDetails> getAllRequests() throws RequestException
     {
         return requestService.getAllRequests();
     }
 
-    @GetMapping("/{requestId}")
-    public LCRequestResponse getRequestById(@PathVariable Long requestId) throws RequestException {
-        return requestService.getRequestById(requestId);
-    }
 
     @GetMapping("/requestor/{cdsId}")
-    public List<LCRequestResponse> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
+    public List<RequestsViewDetails> getRequestByCdsId(@PathVariable String cdsId) throws RequestException {
         return requestService.getRequestByCdsId(cdsId);
     }
 
@@ -46,5 +48,14 @@ public class RequestController {
         return requestService.getRequestByStatus(status);
     }
 
+    @PutMapping("/update/{requestId}")
+    public RequestSubmitResponse updateRequest(@PathVariable Long requestId, @RequestBody RequestsViewDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException {
+        return requestService.updateRequest(requestId, requestsUpdateDetails);
+    }
+
+    @GetMapping("/{requestId}")
+    public RequestsViewDetails getRequestById(@PathVariable Long requestId) throws RequestException {
+        return requestService.getRequestById(requestId);
+    }
 
 }

@@ -20,14 +20,14 @@ public class Department {
     @JsonIgnore
     private UserInfo manager;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<UserInfo> users;
 
 //    @OneToOne
 //    private Budget budget;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Request> requests;
 

@@ -2,7 +2,7 @@ package com.example.DTOs;
 
 import java.time.LocalDate;
 
-public class LCRequestResponse {
+public class RequestsViewDetails {
 
     private Long RequestId;
     private String department;
@@ -11,6 +11,51 @@ public class LCRequestResponse {
     private String justification;
     private Integer noOfParticipants;
     private String requestStatus;
+    private String requestedBy;
+    private String tanNo;
+    private String curriculum;
+    private String approvedBy;
+    private String approvalNotes;
+
+    public String getApprovalNotes() {
+        return approvalNotes;
+    }
+
+    public void setApprovalNotes(String approvalNotes) {
+        this.approvalNotes = approvalNotes;
+    }
+
+    public String getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public String getTanNo() {
+        return tanNo;
+    }
+
+    public void setTanNo(String tanNo) {
+        this.tanNo = tanNo;
+    }
+
+    public String getCurriculum() {
+        return curriculum;
+    }
+
+    public void setCurriculum(String curriculum) {
+        this.curriculum = curriculum;
+    }
+
+    public String getRequestedBy() {
+        return requestedBy;
+    }
+
+    public void setRequestedBy(String requestedBy) {
+        this.requestedBy = requestedBy;
+    }
 
     public Long getRequestId() {
         return RequestId;

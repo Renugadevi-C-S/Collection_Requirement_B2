@@ -1,5 +1,6 @@
 package com.example.user;
 
+import com.example.DTOs.NewUserInfo;
 import com.example.DTOs.LogInRequest;
 import com.example.DTOs.LogInResponse;
 import com.example.collectionRequirements.request.RequestException;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080"})
@@ -22,8 +22,8 @@ public class UserController {
     }
 
     @PostMapping
-    public UserInfo createUser(@RequestBody UserInfo userInfo) {
-        return userService.createUser(userInfo);
+    public UserInfo createUser(@RequestBody NewUserInfo newUserInfo) {
+        return userService.createUser(newUserInfo);
     }
 
     @GetMapping("/cdsId/{cdsId}")
