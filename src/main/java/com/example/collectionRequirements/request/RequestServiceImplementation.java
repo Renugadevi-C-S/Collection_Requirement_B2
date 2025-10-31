@@ -13,19 +13,16 @@ import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.apache.commons.lang3.stream.LangCollectors.collect;
 
 @Service
 public class RequestServiceImplementation implements RequestService {
 
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
-    private RequestRepository requestRepository;
+    private final RequestRepository requestRepository;
 
     @Autowired
     public RequestServiceImplementation(RequestRepository requestRepository, UserRepository userRepository, DepartmentRepository departmentRepository)
@@ -35,25 +32,55 @@ public class RequestServiceImplementation implements RequestService {
         this.departmentRepository = departmentRepository;
     }
 
+    /**
+     * Helper method to convert Request entity to RequestsViewDetails DTO
+     * Ensures all fields are properly set with null checks
+     */
+    private RequestsViewDetails convertToRequestsViewDetails(Request request) {
+        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
+
+        requestsViewDetails.setRequestId(request.getRequestId());
+        requestsViewDetails.setRequestStatus(request.getRequestStatus());
+        requestsViewDetails.setRequestDate(request.getRequestDate());
+        requestsViewDetails.setCurriculum(request.getCurriculumLink());
+        requestsViewDetails.setTanNo(request.getTAN_Number());
+        requestsViewDetails.setJustification(request.getJustification());
+        requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
+
+        // Set requestor
+        if(request.getRequestor() != null)
+            requestsViewDetails.setRequestedBy(request.getRequestor().getCdsID());
+
+        // Set department
+        if(request.getDepartment() != null)
+            requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
+
+        // Set event name
+        if(request.getEvent() != null)
+            requestsViewDetails.setEventName(request.getEvent().getEventName());
+        else
+            requestsViewDetails.setEventName("EventNotCreated");
+
+        // Set approved by
+        if(request.getApproval() != null ){
+            requestsViewDetails.setApprovedBy(request.getApproval().getApprovedBy().getCdsID());
+            requestsViewDetails.setApprovalNotes(request.getApproval().getApprovalNotes());
+        }
+
+        else{
+            requestsViewDetails.setApprovedBy("Not Approved Yet");
+            requestsViewDetails.setApprovalNotes("Not Approved Yet");
+        }
+
+
+        return requestsViewDetails;
+    }
 
     public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
                 .orElseThrow(()->new RequestException("Request Not Found"));
 
-        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-
-        requestsViewDetails.setRequestedBy(fetchedRequest.getRequestor().getCdsID());
-        requestsViewDetails.setRequestId(fetchedRequest.getRequestId());
-        requestsViewDetails.setRequestStatus(fetchedRequest.getRequestStatus());
-        requestsViewDetails.setRequestDate(fetchedRequest.getRequestDate());
-        if(fetchedRequest.getDepartment()!=null)
-            requestsViewDetails.setDepartment(fetchedRequest.getDepartment().getDepartmentName());
-        requestsViewDetails.setJustification(fetchedRequest.getJustification());
-        if(fetchedRequest.getEvent()!=null)
-            requestsViewDetails.setEventName(fetchedRequest.getEvent().getEventName());
-        requestsViewDetails.setNoOfParticipants(fetchedRequest.getNoOfParticipants());
-
-        return requestsViewDetails;
+        return convertToRequestsViewDetails(fetchedRequest);
     }
     public List<RequestsViewDetails> getAllRequests() throws RequestException
     {
@@ -64,22 +91,9 @@ public class RequestServiceImplementation implements RequestService {
             throw new RequestException("Request Not Found");
         }
 
-        return requestList.stream().map(req->{
-
-            RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-            requestsViewDetails.setRequestId(req.getRequestId());
-            requestsViewDetails.setRequestStatus(req.getRequestStatus());
-            requestsViewDetails.setRequestDate(req.getRequestDate());
-            requestsViewDetails.setJustification(req.getJustification());
-            if(req.getDepartment()!=null)
-                requestsViewDetails.setDepartment(req.getDepartment().getDepartmentName());
-            if(req.getEvent()!=null)
-                requestsViewDetails.setEventName(req.getEvent().getEventName());
-            else
-                requestsViewDetails.setEventName("EventNotCreated");
-            requestsViewDetails.setNoOfParticipants(req.getNoOfParticipants());
-            return requestsViewDetails;
-        }).collect(Collectors.toList());
+        return requestList.stream()
+                .map(this::convertToRequestsViewDetails)
+                .collect(Collectors.toList());
     }
     public List<Request> getRequestByStatus(String status) throws RequestException
     {
@@ -98,25 +112,9 @@ public class RequestServiceImplementation implements RequestService {
         if(fetchedRequests.isEmpty())
             throw new RequestException("Request Not Found");
 
-        return fetchedRequests
-            .stream()
-            .map((request)->{
-                RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
-
-                requestsViewDetails.setRequestId(request.getRequestId());
-                requestsViewDetails.setRequestStatus(request.getRequestStatus());
-                requestsViewDetails.setRequestDate(request.getRequestDate());
-                if(request.getDepartment()!=null)
-                    requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
-                if(request.getEvent()!=null)
-                    requestsViewDetails.setEventName(request.getEvent().getEventName());
-                else
-                    requestsViewDetails.setEventName("EventNotCreated");
-                requestsViewDetails.setJustification(request.getJustification());
-                requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
-
-                return requestsViewDetails;
-            }).toList();
+        return fetchedRequests.stream()
+                .map(this::convertToRequestsViewDetails)
+                .toList();
     }
 
     @Override
@@ -146,6 +144,53 @@ public class RequestServiceImplementation implements RequestService {
 
         return new RequestSubmitResponse("New Request Submitted Successfully ");
     }
+
+    @Override
+    public RequestSubmitResponse updateRequest(Long requestId, RequestsViewDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
+
+        // Find existing request
+        Request existingRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestException("Request Not Found with ID: " + requestId));
+
+        // Update department if provided
+        if (requestUpdateDetails.getDepartment() != null && !requestUpdateDetails.getDepartment().isEmpty()) {
+            Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestUpdateDetails.getDepartment());
+            if (fetchedDepartment == null) {
+                throw new DepartmentException("Department not found for name: " + requestUpdateDetails.getDepartment());
+            }
+            existingRequest.setDepartment(fetchedDepartment);
+        }
+
+        // Update justification if provided
+        if (requestUpdateDetails.getJustification() != null) {
+            existingRequest.setJustification(requestUpdateDetails.getJustification());
+        }
+
+        // Update TAN number if provided
+        if (requestUpdateDetails.getTanNo() != null) {
+            existingRequest.setTAN_Number(requestUpdateDetails.getTanNo());
+        }
+
+        // Update number of participants if provided
+        if (requestUpdateDetails.getNoOfParticipants() != null) {
+            existingRequest.setNoOfParticipants(requestUpdateDetails.getNoOfParticipants());
+            // Update group request flag based on participants
+            existingRequest.setGroupRequest(requestUpdateDetails.getNoOfParticipants() >= 10);
+        }
+
+        // Update curriculum link if provided
+        if (requestUpdateDetails.getCurriculum() != null) {
+            existingRequest.setCurriculumLink(requestUpdateDetails.getCurriculum());
+        }
+
+
+        // Save updated request
+        requestRepository.save(existingRequest);
+
+        return new RequestSubmitResponse("Request updated successfully");
+    }
+
+
 
 
 }

@@ -18,7 +18,7 @@ public class Request {
     @GeneratedValue
     private Long requestId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonIgnore
     private UserInfo requestor;
@@ -31,11 +31,11 @@ public class Request {
         this.requestor = requestor;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Department department;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonIgnore
     private Event event;
@@ -86,7 +86,7 @@ public class Request {
 
     private Integer noOfParticipants;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "RequestedParticipants",
             joinColumns = @JoinColumn(name = "Request_Id", referencedColumnName = "requestId"),

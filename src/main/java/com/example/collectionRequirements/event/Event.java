@@ -19,7 +19,7 @@ public class Event {
 
     private String description;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Request> requests;
 
@@ -33,7 +33,7 @@ public class Event {
 
     private String status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private UserInfo createdBy;
 
