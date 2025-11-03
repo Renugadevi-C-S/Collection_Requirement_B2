@@ -1,5 +1,6 @@
 package com.example.collectionRequirements.event;
 
+import com.example.DTOs.AvailableRequest;
 import com.example.DTOs.EventDetails;
 import com.example.DTOs.EventSubmitResponse;
 import com.example.DTOs.EventViewDetails;
@@ -29,24 +30,21 @@ public class EventServiceImplementation implements EventService {
     }
 
     @Override
-    public EventSubmitResponse createEvent(EventDetails eventDetails, String cdsId) throws EventException {
+    public EventSubmitResponse createEvent(EventDetails eventDetails) throws EventException {
         if (eventDetails.getEventName() == null || eventDetails.getEventName().trim().isEmpty()) {
             throw new EventException("Event name cannot be empty.");
         }
 
-        Optional<UserInfo> creator = userRepository.findByCdsID(cdsId);
-        if (creator.isEmpty()) {
-            throw new EventException("User with cdsID " + cdsId + " not found");
+        if (eventDetails.getCreatedBy() == null || eventDetails.getCreatedBy().trim().isEmpty()) {
+            throw new EventException("Creator ID is required.");
         }
 
-        Event newEvent = new Event();
-        newEvent.setEventName(eventDetails.getEventName());
-        newEvent.setDescription(eventDetails.getDescription());
-        newEvent.setDuration(eventDetails.getDuration());
-        newEvent.setEventType(eventDetails.getEventType());
-        newEvent.setFundingSource(eventDetails.getFundingSource());
-        newEvent.setStatus(eventDetails.getStatus());
-        newEvent.setCreatedBy(creator.get());
+        Optional<UserInfo> creator = userRepository.findByCdsID(eventDetails.getCreatedBy());
+        if (creator.isEmpty()) {
+            throw new EventException("User with cdsID " + eventDetails.getCreatedBy() + " not found");
+        }
+
+        Event newEvent = mapToEvent(eventDetails, creator.get());
 
         // Handle linking requests to event
         int totalParticipants = 0;
@@ -61,7 +59,7 @@ public class EventServiceImplementation implements EventService {
                 Request request = requestOpt.get();
 
                 // Validate request is approved and not already linked to an event
-                if (!"approved".equalsIgnoreCase(request.getRequestStatus())) {
+                if (!"Approved".equalsIgnoreCase(request.getRequestStatus())) {
                     throw new EventException("Request " + requestId + " is not approved");
                 }
 
@@ -71,7 +69,7 @@ public class EventServiceImplementation implements EventService {
 
                 // Link request to event
                 request.setEvent(newEvent);
-//                requestRepository.save(request);
+                requestRepository.save(request);
 
                 // Sum up participants
                 if (request.getNoOfParticipants() != null) {
@@ -90,39 +88,19 @@ public class EventServiceImplementation implements EventService {
                 " linked request(s)");
     }
 
-    // NEW METHOD - Get approved requests without an event
+    //Get available requests that are approved to link with events
     @Override
-    public List<Request> getApprovedRequestsWithoutEvent() throws EventException {
+    public List<AvailableRequest> getAvailableRequestsForEvent() throws EventException {
         try {
-            return requestRepository.findByRequestStatusAndEventIsNull("Approved");
+            List<Request> requests = requestRepository.findByRequestStatusAndEventIsNull("Approved");
+
+            return requests.stream()
+                    .map(this::mapToAvailableRequest)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new EventException("Failed to retrieve approved requests without events");
+            throw new EventException("Failed to retrieve available requests for event: " + e.getMessage());
         }
     }
-
-//    public EventSubmitResponse createEvent(EventDetails eventDetails, String cdsId) throws EventException {
-//        if (eventDetails.getEventName() == null || eventDetails.getEventName().trim().isEmpty()) {
-//            throw new EventException("Event name cannot be empty.");
-//        }
-//
-//        Optional<UserInfo> creator = userRepository.findByCdsID(cdsId);
-//        if (creator.isEmpty()) {
-//            throw new EventException("User with cdsID " + cdsId + " not found");
-//        }
-//
-//        Event newEvent = new Event();
-//        newEvent.setEventName(eventDetails.getEventName());
-//        newEvent.setDescription(eventDetails.getDescription());
-//        newEvent.setDuration(eventDetails.getDuration());
-//        newEvent.setEventType(eventDetails.getEventType());
-//        newEvent.setFundingSource(eventDetails.getFundingSource());
-//        newEvent.setStatus(eventDetails.getStatus());
-//        newEvent.setCreatedBy(creator.get());
-//
-//        eventRepository.save(newEvent);
-//
-//        return new EventSubmitResponse("Event created successfully");
-//    }
 
     @Override
     public EventViewDetails getEventById(Long eventId) throws EventException {
@@ -156,7 +134,7 @@ public class EventServiceImplementation implements EventService {
                     .map(this::mapToEventViewDetails)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new EventException("Failed to retrieve all events.");
+            throw new EventException("Failed to retrieve all events: " + e.getMessage());
         }
     }
 
@@ -172,7 +150,6 @@ public class EventServiceImplementation implements EventService {
         if (eventDetails.getStatus() != null && "Deleted".equalsIgnoreCase(eventDetails.getStatus())) {
             throw new EventException("Cannot set status to 'Deleted' through EDIT endpoint. Use Delete endpoint instead.");
         }
-
         if (eventDetails.getEventName() != null && !eventDetails.getEventName().trim().isEmpty()) {
             existingEvent.setEventName(eventDetails.getEventName());
         }
@@ -244,6 +221,18 @@ public class EventServiceImplementation implements EventService {
                 .collect(Collectors.toList());
     }
 
+    private Event mapToEvent(EventDetails eventDetails, UserInfo creator) {
+        Event event = new Event();
+        event.setEventName(eventDetails.getEventName());
+        event.setDescription(eventDetails.getDescription());
+        event.setDuration(eventDetails.getDuration());
+        event.setEventType(eventDetails.getEventType());
+        event.setFundingSource(eventDetails.getFundingSource());
+        event.setStatus(eventDetails.getStatus());
+        event.setCreatedBy(creator);
+        return event;
+    }
+
     private EventViewDetails mapToEventViewDetails(Event event) {
         EventViewDetails eventViewDetails = new EventViewDetails();
         eventViewDetails.setEventId(event.getEventId());
@@ -255,6 +244,26 @@ public class EventServiceImplementation implements EventService {
         if (event.getCreatedBy() != null) {
             eventViewDetails.setCreatedBy(event.getCreatedBy().getCdsID());
         }
+
         return eventViewDetails;
+    }
+
+    private AvailableRequest mapToAvailableRequest(Request request) {
+        AvailableRequest availableRequest = new AvailableRequest();
+        availableRequest.setRequestId(request.getRequestId());
+        availableRequest.setTanNumber(request.getTAN_Number());
+        availableRequest.setNoOfParticipants(request.getNoOfParticipants());
+        availableRequest.setRequestDate(request.getRequestDate());
+        availableRequest.setJustification(request.getJustification());
+
+        if (request.getRequestor() != null) {
+            availableRequest.setRequestedBy(request.getRequestor().getCdsID());
+        }
+
+        if (request.getDepartment() != null) {
+            availableRequest.setDepartment(request.getDepartment().getDepartmentName());
+        }
+
+        return availableRequest;
     }
 }
