@@ -45,6 +45,7 @@ public class EventServiceImplementation implements EventService {
         }
 
         Event newEvent = mapToEvent(eventDetails, creator.get());
+        newEvent = eventRepository.save(newEvent);
 
         // Handle linking requests to event
         int totalParticipants = 0;
@@ -80,12 +81,11 @@ public class EventServiceImplementation implements EventService {
 
         // Set participants count (from linked requests or 0 if none)
         newEvent.setParticipantsCount(totalParticipants);
-
         eventRepository.save(newEvent);
 
         return new EventSubmitResponse("Event created successfully with " +
                 (eventDetails.getRequestIds() != null ? eventDetails.getRequestIds().size() : 0) +
-                " linked request(s)");
+                " linked request(s) and " + totalParticipants + " total participants.");
     }
 
     //Get available requests that are approved to link with events
