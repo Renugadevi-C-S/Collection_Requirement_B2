@@ -10,6 +10,7 @@ public class EventDetails {
     private String fundingSource;
     private String status;
     private List<Long> requestIds;
+    private String createdBy;
 
     public String getEventName() {
         return eventName;
@@ -65,5 +66,13 @@ public class EventDetails {
 
     public void setRequestIds(List<Long> requestIds) {
         this.requestIds = requestIds;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }
