@@ -14,4 +14,6 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
     @Query("SELECT req FROM Request req WHERE req.requestor.cdsID = :cdsId")
     List<Request> findRequestsByRequestorCdsId(@Param("cdsId") String cdsId);
 
+    List<Request> findByRequestStatusAndEventIsNull(String requestStatus);
+
 }

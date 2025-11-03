@@ -1,5 +1,7 @@
 package com.example.DTOs;
 
+import java.util.List;
+
 public class EventDetails {
     private String eventName;
     private String description;
@@ -7,6 +9,7 @@ public class EventDetails {
     private String eventType;
     private String fundingSource;
     private String status;
+    private List<Long> requestIds;
 
     public String getEventName() {
         return eventName;
@@ -54,5 +57,13 @@ public class EventDetails {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<Long> getRequestIds() {
+        return requestIds;
+    }
+
+    public void setRequestIds(List<Long> requestIds) {
+        this.requestIds = requestIds;
     }
 }

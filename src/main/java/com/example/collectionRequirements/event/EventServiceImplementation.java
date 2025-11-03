@@ -3,6 +3,8 @@ package com.example.collectionRequirements.event;
 import com.example.DTOs.EventDetails;
 import com.example.DTOs.EventSubmitResponse;
 import com.example.DTOs.EventViewDetails;
+import com.example.collectionRequirements.request.Request;
+import com.example.collectionRequirements.request.RequestRepository;
 import com.example.user.UserInfo;
 import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,13 @@ public class EventServiceImplementation implements EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final RequestRepository requestRepository;
 
     @Autowired
-    public EventServiceImplementation(EventRepository eventRepository, UserRepository userRepository) {
+    public EventServiceImplementation(EventRepository eventRepository, UserRepository userRepository,RequestRepository requestRepository) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.requestRepository = requestRepository;
     }
 
     @Override
@@ -44,10 +48,81 @@ public class EventServiceImplementation implements EventService {
         newEvent.setStatus(eventDetails.getStatus());
         newEvent.setCreatedBy(creator.get());
 
+        // Handle linking requests to event
+        int totalParticipants = 0;
+        if (eventDetails.getRequestIds() != null && !eventDetails.getRequestIds().isEmpty()) {
+            for (Long requestId : eventDetails.getRequestIds()) {
+                Optional<Request> requestOpt = requestRepository.findById(requestId);
+
+                if (requestOpt.isEmpty()) {
+                    throw new EventException("Request with ID " + requestId + " not found");
+                }
+
+                Request request = requestOpt.get();
+
+                // Validate request is approved and not already linked to an event
+                if (!"approved".equalsIgnoreCase(request.getRequestStatus())) {
+                    throw new EventException("Request " + requestId + " is not approved");
+                }
+
+                if (request.getEvent() != null) {
+                    throw new EventException("Request " + requestId + " is already linked to another event");
+                }
+
+                // Link request to event
+                request.setEvent(newEvent);
+//                requestRepository.save(request);
+
+                // Sum up participants
+                if (request.getNoOfParticipants() != null) {
+                    totalParticipants += request.getNoOfParticipants();
+                }
+            }
+        }
+
+        // Set participants count (from linked requests or 0 if none)
+        newEvent.setParticipantsCount(totalParticipants);
+
         eventRepository.save(newEvent);
 
-        return new EventSubmitResponse("Event created successfully");
+        return new EventSubmitResponse("Event created successfully with " +
+                (eventDetails.getRequestIds() != null ? eventDetails.getRequestIds().size() : 0) +
+                " linked request(s)");
     }
+
+    // NEW METHOD - Get approved requests without an event
+    @Override
+    public List<Request> getApprovedRequestsWithoutEvent() throws EventException {
+        try {
+            return requestRepository.findByRequestStatusAndEventIsNull("Approved");
+        } catch (Exception e) {
+            throw new EventException("Failed to retrieve approved requests without events");
+        }
+    }
+
+//    public EventSubmitResponse createEvent(EventDetails eventDetails, String cdsId) throws EventException {
+//        if (eventDetails.getEventName() == null || eventDetails.getEventName().trim().isEmpty()) {
+//            throw new EventException("Event name cannot be empty.");
+//        }
+//
+//        Optional<UserInfo> creator = userRepository.findByCdsID(cdsId);
+//        if (creator.isEmpty()) {
+//            throw new EventException("User with cdsID " + cdsId + " not found");
+//        }
+//
+//        Event newEvent = new Event();
+//        newEvent.setEventName(eventDetails.getEventName());
+//        newEvent.setDescription(eventDetails.getDescription());
+//        newEvent.setDuration(eventDetails.getDuration());
+//        newEvent.setEventType(eventDetails.getEventType());
+//        newEvent.setFundingSource(eventDetails.getFundingSource());
+//        newEvent.setStatus(eventDetails.getStatus());
+//        newEvent.setCreatedBy(creator.get());
+//
+//        eventRepository.save(newEvent);
+//
+//        return new EventSubmitResponse("Event created successfully");
+//    }
 
     @Override
     public EventViewDetails getEventById(Long eventId) throws EventException {
