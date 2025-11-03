@@ -1,15 +1,15 @@
 package com.example.collectionRequirements.event;
 
+import com.example.DTOs.AvailableRequest;
 import com.example.DTOs.EventDetails;
 import com.example.DTOs.EventSubmitResponse;
 import com.example.DTOs.EventViewDetails;
-import com.example.collectionRequirements.request.Request;
 
 import java.util.List;
 
 public interface EventService {
 
-    EventSubmitResponse createEvent(EventDetails eventDetails, String cdsId) throws EventException;
+    EventSubmitResponse createEvent(EventDetails eventDetails) throws EventException;
 
     EventViewDetails getEventById(Long eventId) throws EventException;
 
@@ -25,6 +25,6 @@ public interface EventService {
 
     List<EventViewDetails> getEventsByType(String eventType) throws EventException;
 
-    List<Request> getApprovedRequestsWithoutEvent() throws EventException;
+    List<AvailableRequest> getAvailableRequestsForEvent() throws EventException;
 
 }
