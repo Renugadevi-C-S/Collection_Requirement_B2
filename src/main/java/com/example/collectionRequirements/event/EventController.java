@@ -109,7 +109,7 @@ public class EventController {
         }
     }
 
-    @GetMapping("/available-requests")
+    @GetMapping("/availableRequests")
     public ResponseEntity<?> getAvailableRequestsForEvent() {
         try {
             List<AvailableRequest> requests = eventService.getAvailableRequestsForEvent();
