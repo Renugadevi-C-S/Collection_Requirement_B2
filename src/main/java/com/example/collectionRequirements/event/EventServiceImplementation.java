@@ -4,6 +4,7 @@ import com.example.DTOs.AvailableRequest;
 import com.example.DTOs.EventDetails;
 import com.example.DTOs.EventSubmitResponse;
 import com.example.DTOs.EventViewDetails;
+import com.example.DTOs.RequestsViewDetails;
 import com.example.collectionRequirements.request.Request;
 import com.example.collectionRequirements.request.RequestRepository;
 import com.example.user.UserInfo;
@@ -109,7 +110,31 @@ public class EventServiceImplementation implements EventService {
             throw new EventException("Event with ID " + eventId + " not found");
         }
 
-        return mapToEventViewDetails(findEvent.get());
+        Event event = findEvent.get();
+        EventViewDetails eventViewDetails = new EventViewDetails();
+
+        eventViewDetails.setEventId(event.getEventId());
+        eventViewDetails.setEventName(event.getEventName());
+        eventViewDetails.setDescription(event.getDescription());
+        eventViewDetails.setDuration(event.getDuration());
+        eventViewDetails.setEventType(event.getEventType());
+        eventViewDetails.setFundingSource(event.getFundingSource());
+        eventViewDetails.setParticipantsCount(event.getParticipantsCount());
+        eventViewDetails.setStatus(event.getStatus());
+
+        if (event.getCreatedBy() != null) {
+            eventViewDetails.setCreatedBy(event.getCreatedBy().getCdsID());
+        }
+
+        // Map linked requests
+        if (event.getRequests() != null && !event.getRequests().isEmpty()) {
+            List<RequestsViewDetails> linkedRequests = event.getRequests().stream()
+                    .map(this::mapRequestToViewDetails)
+                    .collect(Collectors.toList());
+            eventViewDetails.setLinkedRequests(linkedRequests);
+        }
+
+        return eventViewDetails;
     }
 
     @Override
@@ -150,6 +175,8 @@ public class EventServiceImplementation implements EventService {
         if (eventDetails.getStatus() != null && "Deleted".equalsIgnoreCase(eventDetails.getStatus())) {
             throw new EventException("Cannot set status to 'Deleted' through EDIT endpoint. Use Delete endpoint instead.");
         }
+
+        //Update only provided fields (persisting existing values if not provided)
         if (eventDetails.getEventName() != null && !eventDetails.getEventName().trim().isEmpty()) {
             existingEvent.setEventName(eventDetails.getEventName());
         }
@@ -167,6 +194,33 @@ public class EventServiceImplementation implements EventService {
         }
         if (eventDetails.getStatus() != null) {
             existingEvent.setStatus(eventDetails.getStatus());
+        }
+
+        if (eventDetails.getRequestIds() != null) {
+            // Link new requests and calculate participants
+            int totalParticipants = 0;
+            for (Long requestId : eventDetails.getRequestIds()) {
+                Optional<Request> requestOpt = requestRepository.findById(requestId);
+                if (requestOpt.isEmpty()) {
+                    throw new EventException("Request with ID " + requestId + " not found");
+                }
+
+                Request request = requestOpt.get();
+                if (!"Approved".equalsIgnoreCase(request.getRequestStatus())) {
+                    throw new EventException("Request " + requestId + " is not approved");
+                }
+                if (request.getEvent() != null && !request.getEvent().getEventId().equals(eventId)) {
+                    throw new EventException("Request " + requestId + " is already linked to another event");
+                }
+
+                request.setEvent(existingEvent);
+                requestRepository.save(request);
+
+                if (request.getNoOfParticipants() != null) {
+                    totalParticipants += request.getNoOfParticipants();
+                }
+            }
+            existingEvent.setParticipantsCount(totalParticipants);
         }
 
         eventRepository.save(existingEvent);
@@ -246,6 +300,34 @@ public class EventServiceImplementation implements EventService {
         }
 
         return eventViewDetails;
+    }
+
+    private RequestsViewDetails mapRequestToViewDetails(Request request) {
+        RequestsViewDetails viewDetails = new RequestsViewDetails();
+        viewDetails.setRequestId(request.getRequestId());
+        viewDetails.setTanNo(request.getTAN_Number());
+        viewDetails.setNoOfParticipants(request.getNoOfParticipants());
+        viewDetails.setRequestDate(request.getRequestDate());
+        viewDetails.setJustification(request.getJustification());
+        viewDetails.setRequestStatus(request.getRequestStatus());
+        viewDetails.setCurriculum(request.getCurriculumLink());
+
+        if (request.getRequestor() != null) {
+            viewDetails.setRequestedBy(request.getRequestor().getCdsID());
+        }
+
+        if (request.getDepartment() != null) {
+            viewDetails.setDepartment(request.getDepartment().getDepartmentName());
+        }
+
+        if (request.getApproval() != null) {
+            if (request.getApproval().getApprovedBy() != null) {
+                viewDetails.setApprovedBy(request.getApproval().getApprovedBy().getCdsID());
+            }
+            viewDetails.setApprovalNotes(request.getApproval().getApprovalNotes());
+        }
+
+        return viewDetails;
     }
 
     private AvailableRequest mapToAvailableRequest(Request request) {
