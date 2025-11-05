@@ -52,4 +52,10 @@ public class UserController {
         return userService.logIn(logInRequest);
     }
 
+    @PostMapping("/all-multiple-users")
+    public String addMultipleUsers(@RequestBody List<NewUserInfo> newUserInfos) {
+        newUserInfos.forEach(userService::createUser);
+        return "Added "+newUserInfos.size()+" Users Successfully..!";
+    }
+
 }
