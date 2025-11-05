@@ -140,6 +140,11 @@ public class RequestServiceImplementation implements RequestService {
         newRequest.setTAN_Number(requestDetails.getTanNo());
         newRequest.setCurriculumLink(requestDetails.getCurriculum());
 
+        if(requestDetails.getUsersCdsId() != null && requestDetails.getUsersCdsId().length > 0) {
+            List<UserInfo> participants =  userRepository.findByCdsIDIn(List.of(requestDetails.getUsersCdsId()));
+            newRequest.setRequestedParticipants(participants);
+        }
+
         requestRepository.save(newRequest);
 
         return new RequestSubmitResponse("New Request Submitted Successfully ");
