@@ -1,5 +1,6 @@
 package com.example.user;
 
+import com.example.DTOs.BasicUserInfo;
 import com.example.DTOs.LogInRequest;
 import com.example.DTOs.LogInResponse;
 import com.example.DTOs.NewUserInfo;
@@ -16,4 +17,6 @@ public interface UserService {
     UserInfo getUserByCdsId(String cdsId) throws UserException;
 
     LogInResponse logIn(LogInRequest logInRequest) throws UserException;
+
+    List<BasicUserInfo> getAllUsersBasicInfo() throws UserException;
 }

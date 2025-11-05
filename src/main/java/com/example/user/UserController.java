@@ -1,5 +1,6 @@
 package com.example.user;
 
+import com.example.DTOs.BasicUserInfo;
 import com.example.DTOs.NewUserInfo;
 import com.example.DTOs.LogInRequest;
 import com.example.DTOs.LogInResponse;
@@ -52,10 +53,15 @@ public class UserController {
         return userService.logIn(logInRequest);
     }
 
-    @PostMapping("/all-multiple-users")
+    @PostMapping("/add-multiple-users")
     public String addMultipleUsers(@RequestBody List<NewUserInfo> newUserInfos) {
         newUserInfos.forEach(userService::createUser);
         return "Added "+newUserInfos.size()+" Users Successfully..!";
+    }
+
+    @GetMapping("/all/basic-info")
+    public  List<BasicUserInfo> getAllBasicInfo() {
+        return userService.getAllUsersBasicInfo();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.user;
 
+import com.example.DTOs.BasicUserInfo;
 import com.example.DTOs.LogInRequest;
 import com.example.DTOs.LogInResponse;
 import com.example.DTOs.NewUserInfo;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -97,5 +99,25 @@ public class UserServiceImplementation implements UserService {
         logInResponse.setLastName(fetchedUser.getLastName());
 
         return logInResponse;
+    }
+
+    @Override
+    public List<BasicUserInfo> getAllUsersBasicInfo() throws UserException {
+        return userRepository.findAll()
+                .stream()
+                .map(this::mapToBasicUserInfo)
+                .collect(Collectors.toList());
+    }
+
+    public BasicUserInfo mapToBasicUserInfo(UserInfo userInfo) {
+        BasicUserInfo basicUserInfo =  new BasicUserInfo();
+
+        basicUserInfo.setFirstName(userInfo.getFirstName());
+        basicUserInfo.setLastName(userInfo.getLastName());
+        basicUserInfo.setEmail(userInfo.getEmail());
+        basicUserInfo.setCdsId(userInfo.getCdsID());
+
+        return basicUserInfo;
+
     }
 }
