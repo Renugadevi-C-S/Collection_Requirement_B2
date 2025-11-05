@@ -49,7 +49,7 @@ public class RequestController {
     }
 
     @PutMapping("/update/{requestId}")
-    public RequestSubmitResponse updateRequest(@PathVariable Long requestId, @RequestBody RequestsViewDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException {
+    public RequestSubmitResponse updateRequest(@PathVariable Long requestId, @RequestBody RequestDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException {
         return requestService.updateRequest(requestId, requestsUpdateDetails);
     }
 

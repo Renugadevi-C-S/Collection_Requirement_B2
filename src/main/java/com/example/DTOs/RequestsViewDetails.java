@@ -1,6 +1,7 @@
 package com.example.DTOs;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class RequestsViewDetails {
 
@@ -16,6 +17,15 @@ public class RequestsViewDetails {
     private String curriculum;
     private String approvedBy;
     private String approvalNotes;
+    private List<BasicUserInfo> requestedParticipants;
+
+    public List<BasicUserInfo> getRequestedParticipants() {
+        return requestedParticipants;
+    }
+
+    public void setRequestedParticipants(List<BasicUserInfo> requestedParticipants) {
+        this.requestedParticipants = requestedParticipants;
+    }
 
     public String getApprovalNotes() {
         return approvalNotes;

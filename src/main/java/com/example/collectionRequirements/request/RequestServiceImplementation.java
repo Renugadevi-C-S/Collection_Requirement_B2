@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.request;
 
 
+import com.example.DTOs.BasicUserInfo;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
@@ -46,6 +47,30 @@ public class RequestServiceImplementation implements RequestService {
         requestsViewDetails.setTanNo(request.getTAN_Number());
         requestsViewDetails.setJustification(request.getJustification());
         requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
+
+        List<String> participantCdsIds = request.getRequestedParticipants().stream()
+                .map(UserInfo::getCdsID)
+                .toList();
+
+        if(!participantCdsIds.isEmpty()){
+            List<BasicUserInfo> basicUserInfoOfRequestedParticipants = participantCdsIds.stream()
+                    .map((cdsId) -> {
+                        return this.userRepository.findByCdsID(cdsId)
+                                .map(user -> {
+                                    BasicUserInfo basicUserInfo = new BasicUserInfo();
+                                    basicUserInfo.setCdsId(user.getCdsID());
+                                    basicUserInfo.setFirstName(user.getFirstName());
+                                    basicUserInfo.setLastName(user.getLastName());
+                                    basicUserInfo.setEmail(user.getEmail());
+                                    return basicUserInfo;
+                                })
+                                .orElse(null);
+
+                    })
+                    .toList();
+
+            requestsViewDetails.setRequestedParticipants(basicUserInfoOfRequestedParticipants);
+        }
 
         // Set requestor
         if(request.getRequestor() != null)
@@ -151,7 +176,7 @@ public class RequestServiceImplementation implements RequestService {
     }
 
     @Override
-    public RequestSubmitResponse updateRequest(Long requestId, RequestsViewDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
+    public RequestSubmitResponse updateRequest(Long requestId, RequestDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
 
         // Find existing request
         Request existingRequest = requestRepository.findById(requestId)
@@ -186,6 +211,11 @@ public class RequestServiceImplementation implements RequestService {
         // Update curriculum link if provided
         if (requestUpdateDetails.getCurriculum() != null) {
             existingRequest.setCurriculumLink(requestUpdateDetails.getCurriculum());
+        }
+
+        if(requestUpdateDetails.getUsersCdsId() != null && requestUpdateDetails.getUsersCdsId().length > 0) {
+            List<UserInfo> participants =  userRepository.findByCdsIDIn(List.of(requestUpdateDetails.getUsersCdsId()));
+            existingRequest.setRequestedParticipants(participants);
         }
 
 

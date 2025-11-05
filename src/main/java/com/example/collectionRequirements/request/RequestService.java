@@ -17,5 +17,5 @@ public interface RequestService {
     List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException;
 
     RequestSubmitResponse submitNewRequest(RequestDetails requestDetails) throws UserException, DepartmentException;
-    RequestSubmitResponse updateRequest(Long requestId, RequestsViewDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException;
+    RequestSubmitResponse updateRequest(Long requestId, RequestDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException;
 }
