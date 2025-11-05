@@ -8,6 +8,15 @@ public class RequestDetails {
     private Integer noOfParticipants;
     private String department;
     private String curriculum;
+    private String[] usersCdsId;
+
+    public String[] getUsersCdsId() {
+        return usersCdsId;
+    }
+
+    public void setUsersCdsId(String[] usersCdsId) {
+        this.usersCdsId = usersCdsId;
+    }
 
     public String getRequestorId() {
         return requestorId;
