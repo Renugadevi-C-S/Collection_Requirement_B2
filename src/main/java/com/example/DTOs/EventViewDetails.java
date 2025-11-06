@@ -1,5 +1,6 @@
 package com.example.DTOs;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class EventViewDetails {
@@ -13,6 +14,16 @@ public class EventViewDetails {
     private String status;
     private String createdBy;
     private List<RequestsViewDetails> linkedRequests;
+
+    private LocalDate createdDate;
+
+    private String completedBy;
+    private String completionNotes;
+    private LocalDate completedDate;
+
+    private String cancelledBy;
+    private String cancellationNotes;
+    private LocalDate cancelledDate;
 
     public Long getEventId() {
         return eventId;
@@ -92,5 +103,61 @@ public class EventViewDetails {
 
     public void setLinkedRequests(List<RequestsViewDetails> linkedRequests) {
         this.linkedRequests = linkedRequests;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCompletedBy() {
+        return completedBy;
+    }
+
+    public void setCompletedBy(String completedBy) {
+        this.completedBy = completedBy;
+    }
+
+    public String getCompletionNotes() {
+        return completionNotes;
+    }
+
+    public void setCompletionNotes(String completionNotes) {
+        this.completionNotes = completionNotes;
+    }
+
+    public LocalDate getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDate completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public String getCancelledBy() {
+        return cancelledBy;
+    }
+
+    public void setCancelledBy(String cancelledBy) {
+        this.cancelledBy = cancelledBy;
+    }
+
+    public String getCancellationNotes() {
+        return cancellationNotes;
+    }
+
+    public void setCancellationNotes(String cancellationNotes) {
+        this.cancellationNotes = cancellationNotes;
+    }
+
+    public LocalDate getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(LocalDate cancelledDate) {
+        this.cancelledDate = cancelledDate;
     }
 }
