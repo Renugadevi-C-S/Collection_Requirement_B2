@@ -12,6 +12,7 @@ import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +47,9 @@ public class EventServiceImplementation implements EventService {
         }
 
         Event newEvent = mapToEvent(eventDetails, creator.get());
+
+        newEvent.setCreatedDate(LocalDate.now());
+
         newEvent = eventRepository.save(newEvent);
 
         // Handle linking requests to event
@@ -126,6 +130,14 @@ public class EventServiceImplementation implements EventService {
             eventViewDetails.setCreatedBy(event.getCreatedBy().getCdsID());
         }
 
+        eventViewDetails.setCreatedDate(event.getCreatedDate());
+        eventViewDetails.setCompletedBy(event.getCompletedBy());
+        eventViewDetails.setCompletionNotes(event.getCompletionNotes());
+        eventViewDetails.setCompletedDate(event.getCompletedDate());
+        eventViewDetails.setCancelledBy(event.getCancelledBy());
+        eventViewDetails.setCancellationNotes(event.getCancellationNotes());
+        eventViewDetails.setCancelledDate(event.getCancelledDate());
+
         // Map linked requests
         if (event.getRequests() != null && !event.getRequests().isEmpty()) {
             List<RequestsViewDetails> linkedRequests = event.getRequests().stream()
@@ -194,6 +206,26 @@ public class EventServiceImplementation implements EventService {
         }
         if (eventDetails.getStatus() != null) {
             existingEvent.setStatus(eventDetails.getStatus());
+        }
+
+        if (eventDetails.getCompletedBy() != null) {
+            existingEvent.setCompletedBy(eventDetails.getCompletedBy());
+        }
+        if (eventDetails.getCompletionNotes() != null) {
+            existingEvent.setCompletionNotes(eventDetails.getCompletionNotes());
+        }
+        if (eventDetails.getCompletedDate() != null) {
+            existingEvent.setCompletedDate(LocalDate.parse(eventDetails.getCompletedDate()));
+        }
+
+        if (eventDetails.getCancelledBy() != null) {
+            existingEvent.setCancelledBy(eventDetails.getCancelledBy());
+        }
+        if (eventDetails.getCancellationNotes() != null) {
+            existingEvent.setCancellationNotes(eventDetails.getCancellationNotes());
+        }
+        if (eventDetails.getCancelledDate() != null) {
+            existingEvent.setCancelledDate(LocalDate.parse(eventDetails.getCancelledDate()));
         }
 
         if (eventDetails.getRequestIds() != null) {
@@ -298,6 +330,14 @@ public class EventServiceImplementation implements EventService {
         if (event.getCreatedBy() != null) {
             eventViewDetails.setCreatedBy(event.getCreatedBy().getCdsID());
         }
+
+        eventViewDetails.setCreatedDate(event.getCreatedDate());
+        eventViewDetails.setCompletedBy(event.getCompletedBy());
+        eventViewDetails.setCompletionNotes(event.getCompletionNotes());
+        eventViewDetails.setCompletedDate(event.getCompletedDate());
+        eventViewDetails.setCancelledBy(event.getCancelledBy());
+        eventViewDetails.setCancellationNotes(event.getCancellationNotes());
+        eventViewDetails.setCancelledDate(event.getCancelledDate());
 
         return eventViewDetails;
     }
