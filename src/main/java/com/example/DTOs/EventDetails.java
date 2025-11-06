@@ -12,6 +12,14 @@ public class EventDetails {
     private List<Long> requestIds;
     private String createdBy;
 
+    private String completedBy;
+    private String completionNotes;
+    private String completedDate;
+
+    private String cancelledBy;
+    private String cancellationNotes;
+    private String cancelledDate;
+
     public String getEventName() {
         return eventName;
     }
@@ -74,5 +82,53 @@ public class EventDetails {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getCompletedBy() {
+        return completedBy;
+    }
+
+    public void setCompletedBy(String completedBy) {
+        this.completedBy = completedBy;
+    }
+
+    public String getCompletionNotes() {
+        return completionNotes;
+    }
+
+    public void setCompletionNotes(String completionNotes) {
+        this.completionNotes = completionNotes;
+    }
+
+    public String getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(String completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public String getCancelledBy() {
+        return cancelledBy;
+    }
+
+    public void setCancelledBy(String cancelledBy) {
+        this.cancelledBy = cancelledBy;
+    }
+
+    public String getCancellationNotes() {
+        return cancellationNotes;
+    }
+
+    public void setCancellationNotes(String cancellationNotes) {
+        this.cancellationNotes = cancellationNotes;
+    }
+
+    public String getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(String cancelledDate) {
+        this.cancelledDate = cancelledDate;
     }
 }
