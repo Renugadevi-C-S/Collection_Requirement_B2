@@ -5,6 +5,7 @@ import com.example.user.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -12,7 +13,6 @@ public class Event {
 
     @Id
     @GeneratedValue
-
     private Long eventId;
 
     private String eventName;
@@ -36,6 +36,16 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private UserInfo createdBy;
+
+    private LocalDate createdDate;
+
+    private String completedBy;
+    private String completionNotes;
+    private LocalDate completedDate;
+
+    private String cancelledBy;
+    private String cancellationNotes;
+    private LocalDate cancelledDate;
 
     public UserInfo getCreatedBy() {
         return createdBy;
@@ -117,6 +127,62 @@ public class Event {
         this.status = eventStatus;
     }
 
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCompletedBy() {
+        return completedBy;
+    }
+
+    public void setCompletedBy(String completedBy) {
+        this.completedBy = completedBy;
+    }
+
+    public String getCompletionNotes() {
+        return completionNotes;
+    }
+
+    public void setCompletionNotes(String completionNotes) {
+        this.completionNotes = completionNotes;
+    }
+
+    public LocalDate getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDate completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public String getCancelledBy() {
+        return cancelledBy;
+    }
+
+    public void setCancelledBy(String cancelledBy) {
+        this.cancelledBy = cancelledBy;
+    }
+
+    public String getCancellationNotes() {
+        return cancellationNotes;
+    }
+
+    public void setCancellationNotes(String cancellationNotes) {
+        this.cancellationNotes = cancellationNotes;
+    }
+
+    public LocalDate getCancelledDate() {
+        return cancelledDate;
+    }
+
+    public void setCancelledDate(LocalDate cancelledDate) {
+        this.cancelledDate = cancelledDate;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
@@ -129,6 +195,11 @@ public class Event {
                 ", eventType='" + eventType + '\'' +
                 ", fundingSource=" + fundingSource +
                 ", eventStatus='" + status + '\'' +
+                ", createdDate=" + createdDate +
+                ", completedBy='" + completedBy + '\'' +
+                ", completedDate=" + completedDate +
+                ", cancelledBy='" + cancelledBy + '\'' +
+                ", cancelledDate=" + cancelledDate +
                 '}';
     }
 }
