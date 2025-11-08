@@ -218,14 +218,22 @@ public class RequestServiceImplementation implements RequestService {
             existingRequest.setRequestedParticipants(participants);
         }
 
-
         // Save updated request
         requestRepository.save(existingRequest);
 
         return new RequestSubmitResponse("Request updated successfully");
     }
 
+    @Override
+    public RequestSubmitResponse deleteRequest(Long requestId) throws RequestException {
+        Optional<Request> requestOpt = requestRepository.findById(requestId);
+        if (requestOpt.isEmpty()) {
+            throw new RequestException("Request with ID " + requestId + " not found for deletion.");
+        }
+        Request request = requestOpt.get();
+        request.setRequestStatus("Deleted");
+        requestRepository.save(request);
 
-
-
+        return new RequestSubmitResponse("Request deleted successfully");
+    }
 }

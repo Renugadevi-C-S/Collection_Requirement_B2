@@ -12,10 +12,14 @@ public interface RequestService {
 
     RequestsViewDetails getRequestById(long requestId)throws RequestException;
     List<RequestsViewDetails> getAllRequests()throws RequestException;
+
     List<Request> getRequestByStatus(String status)throws RequestException;
 
     List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException;
 
     RequestSubmitResponse submitNewRequest(RequestDetails requestDetails) throws UserException, DepartmentException;
+
     RequestSubmitResponse updateRequest(Long requestId, RequestDetails requestsUpdateDetails) throws UserException, DepartmentException, RequestException;
+
+    RequestSubmitResponse deleteRequest(Long requestId) throws RequestException;
 }

@@ -24,8 +24,6 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-
-
     @PostMapping("/newRequest")
     public RequestSubmitResponse submitNewRequest(@RequestBody RequestDetails requestDetails) {
         return requestService.submitNewRequest(requestDetails);
@@ -58,4 +56,8 @@ public class RequestController {
         return requestService.getRequestById(requestId);
     }
 
+    @DeleteMapping("/{requestId}")
+    public RequestSubmitResponse deleteRequest(@PathVariable Long requestId) throws RequestException {
+        return requestService.deleteRequest(requestId);
+    }
 }
