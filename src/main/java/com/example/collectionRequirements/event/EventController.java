@@ -118,4 +118,14 @@ public class EventController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/availableRequests/{eventId}")
+    public ResponseEntity<?> getAvailableRequestsForEventEdit(@PathVariable Long eventId) {
+        try {
+            List<AvailableRequest> requests = eventService.getAvailableRequestsForEvent(eventId);
+            return ResponseEntity.ok(requests);
+        } catch (EventException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
