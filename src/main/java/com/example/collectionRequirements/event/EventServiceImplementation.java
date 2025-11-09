@@ -347,6 +347,22 @@ public class EventServiceImplementation implements EventService {
         }
 
         Event event = eventOpt.get();
+
+        // Check if event status is "In Progress" or "Planned" before unlinking requests
+        String currentStatus = event.getStatus();
+        if ("In Progress".equalsIgnoreCase(currentStatus) || "Planned".equalsIgnoreCase(currentStatus)) {
+            // Unlink all requests linked to this event
+            List<Request> linkedRequests = event.getRequests();
+            if (linkedRequests != null && !linkedRequests.isEmpty()) {
+                for (Request request : linkedRequests) {
+                    request.setEvent(null);
+                    request.setRequestStatus("Approved");
+                    requestRepository.save(request);
+                }
+            }
+        }
+
+        // Set event status to "Deleted"
         event.setStatus("Deleted");
         eventRepository.save(event);
 
