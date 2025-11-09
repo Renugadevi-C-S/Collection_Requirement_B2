@@ -41,6 +41,10 @@ public class EventServiceImplementation implements EventService {
             throw new EventException("Creator ID is required.");
         }
 
+        if (eventDetails.getRequestIds() == null || eventDetails.getRequestIds().isEmpty()) {
+            throw new EventException("At least one approved request must be linked to the event.");
+        }
+
         Optional<UserInfo> creator = userRepository.findByCdsID(eventDetails.getCreatedBy());
         if (creator.isEmpty()) {
             throw new EventException("User with cdsID " + eventDetails.getCreatedBy() + " not found");
@@ -294,6 +298,11 @@ public class EventServiceImplementation implements EventService {
         }
 
         if (eventDetails.getRequestIds() != null) {
+
+            if (eventDetails.getRequestIds().isEmpty()) {
+                throw new EventException("At least one approved request must be linked to the event.");
+            }
+
             List<Request> currentlyLinkedRequests = existingEvent.getRequests();
             List<Long> newRequestIds = eventDetails.getRequestIds();
 
