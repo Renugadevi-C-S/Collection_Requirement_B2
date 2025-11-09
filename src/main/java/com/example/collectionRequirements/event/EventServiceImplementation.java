@@ -294,6 +294,19 @@ public class EventServiceImplementation implements EventService {
         }
 
         if (eventDetails.getRequestIds() != null) {
+            List<Request> currentlyLinkedRequests = existingEvent.getRequests();
+            List<Long> newRequestIds = eventDetails.getRequestIds();
+
+            if (currentlyLinkedRequests != null && !currentlyLinkedRequests.isEmpty()) {
+                for (Request linkedRequest : currentlyLinkedRequests) {
+                    if (!newRequestIds.contains(linkedRequest.getRequestId())) {
+                        linkedRequest.setEvent(null);
+                        linkedRequest.setRequestStatus("Approved");
+                        requestRepository.save(linkedRequest);
+                    }
+                }
+            }
+
             // Link new requests and calculate participants
             int totalParticipants = 0;
             for (Long requestId : eventDetails.getRequestIds()) {
