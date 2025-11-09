@@ -27,4 +27,5 @@ public interface EventService {
 
     List<AvailableRequest> getAvailableRequestsForEvent() throws EventException;
 
+    List<AvailableRequest> getAvailableRequestsForEvent(Long eventId) throws EventException;
 }
