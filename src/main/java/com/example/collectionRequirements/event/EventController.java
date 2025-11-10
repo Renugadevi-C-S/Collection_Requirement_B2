@@ -3,6 +3,7 @@ package com.example.collectionRequirements.event;
 import com.example.DTOs.*;
 
 
+import com.example.collectionRequirements.request.RequestException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,6 +75,8 @@ public class EventController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (RequestException e) {
+            throw new RuntimeException(e);
         }
     }
 
