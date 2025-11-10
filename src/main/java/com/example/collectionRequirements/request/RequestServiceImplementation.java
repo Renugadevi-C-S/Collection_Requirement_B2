@@ -254,7 +254,7 @@ public class RequestServiceImplementation implements RequestService {
         stats.setSubmitted(allRequests.stream().filter(r -> "Submitted".equalsIgnoreCase(r.getRequestStatus())).count());
         stats.setApproved(allRequests.stream().filter(r -> "Approved".equalsIgnoreCase(r.getRequestStatus())).count());
         stats.setRejected(allRequests.stream().filter(r -> "Rejected".equalsIgnoreCase(r.getRequestStatus())).count());
-        stats.setLinked(allRequests.stream().filter(r -> "Linked".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setInProgress(allRequests.stream().filter(r -> "In-Progress".equalsIgnoreCase(r.getRequestStatus())).count());
         stats.setCompleted(allRequests.stream().filter(r -> "Completed".equalsIgnoreCase(r.getRequestStatus())).count());
         stats.setDeleted(allRequests.stream().filter(r -> "Deleted".equalsIgnoreCase(r.getRequestStatus())).count());
 

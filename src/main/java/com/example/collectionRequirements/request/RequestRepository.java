@@ -18,6 +18,6 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
 
     @Query("SELECT r FROM Request r WHERE " +
             "(r.requestStatus = 'Approved' AND r.event IS NULL) OR " +
-            "(r.requestStatus = 'Linked' AND r.event.eventId = :eventId)")
+            "(r.requestStatus = 'In-Progress' AND r.event.eventId = :eventId)")
     List<Request> findAvailableRequestsForEventEdit(@Param("eventId") Long eventId);
 }
