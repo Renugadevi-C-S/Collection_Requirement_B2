@@ -76,8 +76,8 @@ public class EventServiceImplementation implements EventService {
                 // Link request to event
                 request.setEvent(newEvent);
 
-                // Set request status to "Linked" when event is created
-                request.setRequestStatus("Linked");
+                // Set request status to "In-Progress" when event is created
+                request.setRequestStatus("In-Progress");
                 requestRepository.save(request);
 
                 // Sum up participants
@@ -324,7 +324,7 @@ public class EventServiceImplementation implements EventService {
 
                 //  Allow both "Approved" and "Linked" (to this event)
                 boolean isApproved = "Approved".equalsIgnoreCase(request.getRequestStatus());
-                boolean isLinkedToThisEvent = "Linked".equalsIgnoreCase(request.getRequestStatus())
+                boolean isLinkedToThisEvent = "In-Progress".equalsIgnoreCase(request.getRequestStatus())
                         && request.getEvent() != null
                         && request.getEvent().getEventId().equals(eventId);
 
@@ -341,7 +341,7 @@ public class EventServiceImplementation implements EventService {
                 // Set request status to "Linked" when linking to event during edit
                 if (!"Completed".equalsIgnoreCase(existingEvent.getStatus()) &&
                         !"Cancelled".equalsIgnoreCase(existingEvent.getStatus())) {
-                    request.setRequestStatus("Linked");
+                    request.setRequestStatus("In-Progress");
                 }
                 requestRepository.save(request);
 
@@ -514,7 +514,7 @@ public class EventServiceImplementation implements EventService {
 
         // Count by status
         stats.setPlanned(allEvents.stream().filter(e -> "Planned".equalsIgnoreCase(e.getStatus())).count());
-        stats.setInProgress(allEvents.stream().filter(e -> "In Progress".equalsIgnoreCase(e.getStatus())).count());
+        stats.setInProgress(allEvents.stream().filter(e -> "In-Progress".equalsIgnoreCase(e.getStatus())).count());
         stats.setCompleted(allEvents.stream().filter(e -> "Completed".equalsIgnoreCase(e.getStatus())).count());
         stats.setCancelled(allEvents.stream().filter(e -> "Cancelled".equalsIgnoreCase(e.getStatus())).count());
         stats.setDeleted(allEvents.stream().filter(e -> "Deleted".equalsIgnoreCase(e.getStatus())).count());
