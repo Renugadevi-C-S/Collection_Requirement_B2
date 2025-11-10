@@ -5,7 +5,7 @@ public class RequestStatistics {
     private Long submitted;
     private Long approved;
     private Long rejected;
-    private Long linked;
+    private Long inProgress;
     private Long completed;
     private Long deleted;
 
@@ -44,12 +44,12 @@ public class RequestStatistics {
         this.rejected = rejected;
     }
 
-    public Long getLinked() {
-        return linked;
+    public Long getInProgress() {
+        return inProgress;
     }
 
-    public void setLinked(Long linked) {
-        this.linked = linked;
+    public void setInProgress(Long inProgress) {
+        this.inProgress = inProgress;
     }
 
     public Long getCompleted() {
