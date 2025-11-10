@@ -1,9 +1,7 @@
 package com.example.collectionRequirements.event;
 
-import com.example.DTOs.AvailableRequest;
-import com.example.DTOs.EventDetails;
-import com.example.DTOs.EventSubmitResponse;
-import com.example.DTOs.EventViewDetails;
+import com.example.DTOs.*;
+
 
 import java.util.List;
 
@@ -28,4 +26,8 @@ public interface EventService {
     List<AvailableRequest> getAvailableRequestsForEvent() throws EventException;
 
     List<AvailableRequest> getAvailableRequestsForEvent(Long eventId) throws EventException;
+
+    EventStatistics getEventStatistics();
+
+
 }

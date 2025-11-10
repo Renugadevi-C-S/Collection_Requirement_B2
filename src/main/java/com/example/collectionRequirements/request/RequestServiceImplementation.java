@@ -1,10 +1,8 @@
 package com.example.collectionRequirements.request;
 
 
-import com.example.DTOs.BasicUserInfo;
-import com.example.DTOs.RequestsViewDetails;
-import com.example.DTOs.RequestDetails;
-import com.example.DTOs.RequestSubmitResponse;
+import com.example.DTOs.*;
+
 import com.example.department.Department;
 import com.example.department.DepartmentException;
 import com.example.department.DepartmentRepository;
@@ -235,5 +233,26 @@ public class RequestServiceImplementation implements RequestService {
         requestRepository.save(request);
 
         return new RequestSubmitResponse("Request deleted successfully");
+    }
+
+    @Override
+    public RequestStatistics getRequestStatistics() {
+        RequestStatistics stats = new RequestStatistics();
+
+        // Get all requests
+        List<Request> allRequests = requestRepository.findAll();
+
+        // Total count
+        stats.setTotal((long) allRequests.size());
+
+        // Count by status
+        stats.setSubmitted(allRequests.stream().filter(r -> "Submitted".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setApproved(allRequests.stream().filter(r -> "Approved".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setRejected(allRequests.stream().filter(r -> "Rejected".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setLinked(allRequests.stream().filter(r -> "Linked".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setCompleted(allRequests.stream().filter(r -> "Completed".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setDeleted(allRequests.stream().filter(r -> "Deleted".equalsIgnoreCase(r.getRequestStatus())).count());
+
+        return stats;
     }
 }

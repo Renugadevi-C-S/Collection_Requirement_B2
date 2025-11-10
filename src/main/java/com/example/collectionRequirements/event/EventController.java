@@ -1,9 +1,7 @@
 package com.example.collectionRequirements.event;
 
-import com.example.DTOs.AvailableRequest;
-import com.example.DTOs.EventDetails;
-import com.example.DTOs.EventSubmitResponse;
-import com.example.DTOs.EventViewDetails;
+import com.example.DTOs.*;
+
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,4 +126,12 @@ public class EventController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<EventStatistics> getEventStatistics() {
+        EventStatistics stats = eventService.getEventStatistics();
+        return ResponseEntity.ok(stats);
+    }
+
+
 }

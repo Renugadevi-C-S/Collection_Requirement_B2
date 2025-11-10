@@ -1,10 +1,6 @@
 package com.example.collectionRequirements.event;
 
-import com.example.DTOs.AvailableRequest;
-import com.example.DTOs.EventDetails;
-import com.example.DTOs.EventSubmitResponse;
-import com.example.DTOs.EventViewDetails;
-import com.example.DTOs.RequestsViewDetails;
+import com.example.DTOs.*;
 import com.example.collectionRequirements.request.Request;
 import com.example.collectionRequirements.request.RequestRepository;
 import com.example.user.UserInfo;
@@ -505,4 +501,25 @@ public class EventServiceImplementation implements EventService {
 
         return availableRequest;
     }
+
+    @Override
+    public EventStatistics getEventStatistics() {
+        EventStatistics stats = new EventStatistics();
+
+        // Get all events
+        List<Event> allEvents = eventRepository.findAll();
+
+        // Total count
+        stats.setTotal((long) allEvents.size());
+
+        // Count by status
+        stats.setPlanned(allEvents.stream().filter(e -> "Planned".equalsIgnoreCase(e.getStatus())).count());
+        stats.setInProgress(allEvents.stream().filter(e -> "In Progress".equalsIgnoreCase(e.getStatus())).count());
+        stats.setCompleted(allEvents.stream().filter(e -> "Completed".equalsIgnoreCase(e.getStatus())).count());
+        stats.setCancelled(allEvents.stream().filter(e -> "Cancelled".equalsIgnoreCase(e.getStatus())).count());
+        stats.setDeleted(allEvents.stream().filter(e -> "Deleted".equalsIgnoreCase(e.getStatus())).count());
+
+        return stats;
+    }
 }
+

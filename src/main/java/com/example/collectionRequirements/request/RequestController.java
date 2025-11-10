@@ -2,9 +2,11 @@ package com.example.collectionRequirements.request;
 
 
 
+import com.example.DTOs.RequestStatistics;
 import com.example.DTOs.RequestsViewDetails;
 import com.example.DTOs.RequestDetails;
 import com.example.DTOs.RequestSubmitResponse;
+
 import com.example.department.DepartmentException;
 import com.example.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +61,10 @@ public class RequestController {
     @DeleteMapping("/{requestId}")
     public RequestSubmitResponse deleteRequest(@PathVariable Long requestId) throws RequestException {
         return requestService.deleteRequest(requestId);
+    }
+
+    @GetMapping("/statistics")
+    public RequestStatistics getRequestStatistics() {
+        return requestService.getRequestStatistics();
     }
 }
