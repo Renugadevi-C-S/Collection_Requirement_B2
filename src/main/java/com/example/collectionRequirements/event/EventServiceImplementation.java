@@ -43,7 +43,7 @@ public class EventServiceImplementation implements EventService {
 
         Optional<UserInfo> creator = userRepository.findByCdsID(eventDetails.getCreatedBy());
         if (creator.isEmpty()) {
-            throw new UserNotFound("User with cdsID " + eventDetails.getCreatedBy() + " not found");
+            throw new UserNotFound("User with cdsId : "+eventDetails.getCreatedBy()+" not found");
         }
 
         Event newEvent = mapToEvent(eventDetails, creator.get());
@@ -59,18 +59,18 @@ public class EventServiceImplementation implements EventService {
                 Optional<Request> requestOpt = requestRepository.findById(requestId);
 
                 if (requestOpt.isEmpty()) {
-                    throw new RequestNotFound("Request with ID " + requestId + " not found");
+                    throw new RequestNotFound("Request not found");
                 }
 
                 Request request = requestOpt.get();
 
                 // Validate request is approved and not already linked to an event
                 if (!"Approved".equalsIgnoreCase(request.getRequestStatus())) {
-                    throw new RequestNotApproved("Request " + requestId + " is not approved");
+                    throw new RequestNotApproved("Request not approved");
                 }
 
                 if (request.getEvent() != null) {
-                    throw new RequestAlreadyLinked("Request " + requestId + " is already linked to another event");
+                    throw new RequestAlreadyLinked("Request already linked to another event");
                 }
 
                 // Link request to event
@@ -134,7 +134,7 @@ public class EventServiceImplementation implements EventService {
     public EventViewDetails getEventById(Long eventId) throws EventException {
         Optional<Event> findEvent = eventRepository.findById(eventId);
         if (findEvent.isEmpty()) {
-            throw new EventNotFound("Event with ID " + eventId + " not found");
+            throw new EventNotFound("Event not found");
         }
 
         Event event = findEvent.get();
@@ -178,7 +178,7 @@ public class EventServiceImplementation implements EventService {
         List<Event> findEvents = eventRepository.findByCreatedBy_CdsID(cdsID);
 
         if (findEvents.isEmpty()) {
-            throw new EventNotFound("No events found for user with cdsID " + cdsID);
+            throw new EventNotFound("No events found");
         }
 
         return findEvents.stream()
@@ -202,7 +202,7 @@ public class EventServiceImplementation implements EventService {
     public EventSubmitResponse editEvent(Long eventId, EventDetails eventDetails) throws EventException, RequestException {
         Optional<Event> existingEventOpt = eventRepository.findById(eventId);
         if (existingEventOpt.isEmpty()) {
-            throw new EventNotFound("Event with ID " + eventId + " not found");
+            throw new EventNotFound("Event not found");
         }
 
         Event existingEvent = existingEventOpt.get();
@@ -317,7 +317,7 @@ public class EventServiceImplementation implements EventService {
             for (Long requestId : eventDetails.getRequestIds()) {
                 Optional<Request> requestOpt = requestRepository.findById(requestId);
                 if (requestOpt.isEmpty()) {
-                    throw new RequestNotFound("Request with ID " + requestId + " not found");
+                    throw new RequestNotFound("Request not found");
                 }
 
                 Request request = requestOpt.get();
@@ -329,11 +329,11 @@ public class EventServiceImplementation implements EventService {
                         && request.getEvent().getEventId().equals(eventId);
 
                 if (!isApproved && !isLinkedToThisEvent) {
-                    throw new RequestException("Request " + requestId + " is not approved or already linked to this event");
+                    throw new RequestException("Request not approved or already linked to this event");
                 }
 
                 if (request.getEvent() != null && !request.getEvent().getEventId().equals(eventId)) {
-                    throw new EventException("Request " + requestId + " is already linked to another event");
+                    throw new EventException("Request already linked to another event");
                 }
 
                 request.setEvent(existingEvent);
@@ -354,7 +354,7 @@ public class EventServiceImplementation implements EventService {
 
         eventRepository.save(existingEvent);
 
-        return new EventSubmitResponse("Event with id : "+ existingEvent.getEventId()+" updated successfully ");
+        return new EventSubmitResponse("Event updated successfully");
     }
 
     @Override

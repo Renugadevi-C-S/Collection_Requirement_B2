@@ -103,7 +103,7 @@ public class RequestServiceImplementation implements RequestService {
 
     public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
-                .orElseThrow(()->new RequestNotFound("Request Not Found with ID: "+requestId));
+                .orElseThrow(()->new RequestNotFound("Request not found"));
 
         return convertToRequestsViewDetails(fetchedRequest);
     }
@@ -130,12 +130,12 @@ public class RequestServiceImplementation implements RequestService {
         Optional<UserInfo> fetchedUser = userRepository.findByCdsID(cdsId);
 
         if(fetchedUser.isEmpty())
-            throw new UserNotFound("User not found with cdsId : "+cdsId);
+            throw new UserNotFound("User not found");
 
         List<Request> fetchedRequests = requestRepository.findRequestsByRequestorCdsId(cdsId);
 
         if(fetchedRequests.isEmpty())
-            throw new RequestNotFound("Request Not Found for User with cdsId: "+cdsId);
+            throw new RequestNotFound("Request not found");
 
         return fetchedRequests.stream()
                 .map(this::convertToRequestsViewDetails)
@@ -147,13 +147,13 @@ public class RequestServiceImplementation implements RequestService {
         Request newRequest = new Request();
 
         UserInfo requestor = userRepository.findByCdsID(requestDetails.getRequestorId())
-                .orElseThrow(()->new UserNotFound("User not found for cdsId: "+requestDetails.getRequestorId()));
+                .orElseThrow(()->new UserNotFound("User not found"));
 
         newRequest.setRequestor(requestor);
 
         Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDepartment());
         if(fetchedDepartment == null)
-            throw new DepartmentNotFound("Department not found for name: "+requestDetails.getDepartment());
+            throw new DepartmentNotFound("Department not found");
 
 
         newRequest.setDepartment(fetchedDepartment);
@@ -172,7 +172,7 @@ public class RequestServiceImplementation implements RequestService {
 
         requestRepository.save(newRequest);
 
-        return new RequestSubmitResponse("New Request Submitted Successfully By User cdsId: " + requestDetails.getRequestorId());
+        return new RequestSubmitResponse("New Request submitted successfully");
     }
 
     @Override
@@ -180,13 +180,13 @@ public class RequestServiceImplementation implements RequestService {
 
         // Find existing request
         Request existingRequest = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFound("Request Not Found with ID: " + requestId));
+                .orElseThrow(() -> new RequestNotFound("Request not found"));
 
         // Update department if provided
         if (requestUpdateDetails.getDepartment() != null && !requestUpdateDetails.getDepartment().isEmpty()) {
             Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestUpdateDetails.getDepartment());
             if (fetchedDepartment == null) {
-                throw new DepartmentNotFound("Department not found for name: " + requestUpdateDetails.getDepartment());
+                throw new DepartmentNotFound("Department not found");
             }
             existingRequest.setDepartment(fetchedDepartment);
         }
@@ -221,20 +221,20 @@ public class RequestServiceImplementation implements RequestService {
         // Save updated request
         requestRepository.save(existingRequest);
 
-        return new RequestSubmitResponse("Request with id: "+existingRequest.getRequestId()+" updated successfully");
+        return new RequestSubmitResponse("Request updated successfully");
     }
 
     @Override
     public RequestSubmitResponse deleteRequest(Long requestId) throws RequestException {
         Optional<Request> requestOpt = requestRepository.findById(requestId);
         if (requestOpt.isEmpty()) {
-            throw new RequestNotFound("Request with ID " + requestId + " not found for deletion.");
+            throw new RequestNotFound("Request not found for deletion");
         }
         Request request = requestOpt.get();
         request.setRequestStatus("Deleted");
         requestRepository.save(request);
 
-        return new RequestSubmitResponse("Request with id: "+request.getRequestId()+" deleted successfully");
+        return new RequestSubmitResponse("Request deleted successfully");
     }
 
     @Override
