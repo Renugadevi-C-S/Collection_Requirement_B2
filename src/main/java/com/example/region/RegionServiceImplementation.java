@@ -2,6 +2,7 @@ package com.example.region;
 
 import com.example.user.UserException;
 import com.example.user.UserInfo;
+import com.example.user.UserNotFound;
 import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,17 @@ public class RegionServiceImplementation implements RegionService {
     }
 
     public List<Region> getAllRegions() {
-        return regionRepository.findAll();
+        List<Region> allReg =  regionRepository.findAll();
+
+        if(allReg.isEmpty())
+            throw  new RegionNotFound("No regions Found.");
+
+        return allReg;
     }
 
     public Region getRegionById(Long regionId) {
         return regionRepository.findById(regionId)
-                .orElseThrow(() -> new RuntimeException("Region not found with id: " + regionId));
+                .orElseThrow(() -> new RegionNotFound("Region not found with id: " + regionId));
     }
 
     public void deleteRegion(Long regionId) {
@@ -42,7 +48,7 @@ public class RegionServiceImplementation implements RegionService {
     public Region getRegionByName(String regionName) throws RegionException {
         Region fetchedRegion =  regionRepository.findRegionsByRegionNameIgnoreCase(regionName);
         if(fetchedRegion == null) {
-            throw new RegionException("Region not found with name: " + regionName);
+            throw new RegionNotFound("Region not found with name: " + regionName);
         }
         return fetchedRegion;
     }
@@ -53,13 +59,13 @@ public class RegionServiceImplementation implements RegionService {
         Region fetchedRegion =  regionRepository.findRegionsByRegionNameIgnoreCase(regionName);
 
         if(fetchedRegion == null) {
-            throw new RegionException("Region not found with name: " + regionName);
+            throw new RegionNotFound("Region not found with name: " + regionName);
         }
 
         Optional<UserInfo> fetchedUser = userRepository.findByCdsID(csdId);
 
         if(fetchedUser.isEmpty())
-            throw new UserException("User not found with id: " + csdId);
+            throw new UserNotFound("User not found with id: " + csdId);
 
         fetchedUser.ifPresent(u -> u.setRegion(fetchedRegion));
 

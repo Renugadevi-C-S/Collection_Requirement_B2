@@ -1,6 +1,7 @@
 package com.example.collectionRequirements.event;
 
 import com.example.DTOs.*;
+import com.example.collectionRequirements.request.RequestException;
 
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface EventService {
 
     List<EventViewDetails> getAllEvents() throws EventException;
 
-    EventSubmitResponse editEvent(Long eventId, EventDetails eventDetails) throws EventException;
+    EventSubmitResponse editEvent(Long eventId, EventDetails eventDetails) throws EventException, RequestException;
 
     EventSubmitResponse deleteEvent(Long eventId) throws EventException;
 

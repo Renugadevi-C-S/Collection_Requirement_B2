@@ -5,9 +5,11 @@ import com.example.DTOs.*;
 
 import com.example.department.Department;
 import com.example.department.DepartmentException;
+import com.example.department.DepartmentNotFound;
 import com.example.department.DepartmentRepository;
 import com.example.user.UserException;
 import com.example.user.UserInfo;
+import com.example.user.UserNotFound;
 import com.example.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,7 +103,7 @@ public class RequestServiceImplementation implements RequestService {
 
     public RequestsViewDetails getRequestById(long requestId) throws RequestException {
         Request fetchedRequest = requestRepository.findById(requestId)
-                .orElseThrow(()->new RequestException("Request Not Found"));
+                .orElseThrow(()->new RequestNotFound("Request Not Found with ID: "+requestId));
 
         return convertToRequestsViewDetails(fetchedRequest);
     }
@@ -111,7 +113,7 @@ public class RequestServiceImplementation implements RequestService {
 
         if(requestList.isEmpty())
         {
-            throw new RequestException("Request Not Found");
+            throw new RequestNotFound("No Requests Found");
         }
 
         return requestList.stream()
@@ -128,12 +130,12 @@ public class RequestServiceImplementation implements RequestService {
         Optional<UserInfo> fetchedUser = userRepository.findByCdsID(cdsId);
 
         if(fetchedUser.isEmpty())
-            throw new UserException("User not found");
+            throw new UserNotFound("User not found with cdsId : "+cdsId);
 
         List<Request> fetchedRequests = requestRepository.findRequestsByRequestorCdsId(cdsId);
 
         if(fetchedRequests.isEmpty())
-            throw new RequestException("Request Not Found");
+            throw new RequestNotFound("Request Not Found for User with cdsId: "+cdsId);
 
         return fetchedRequests.stream()
                 .map(this::convertToRequestsViewDetails)
@@ -145,13 +147,13 @@ public class RequestServiceImplementation implements RequestService {
         Request newRequest = new Request();
 
         UserInfo requestor = userRepository.findByCdsID(requestDetails.getRequestorId())
-                .orElseThrow(()->new UserException("User not found for cdsId: "+requestDetails.getRequestorId()));
+                .orElseThrow(()->new UserNotFound("User not found for cdsId: "+requestDetails.getRequestorId()));
 
         newRequest.setRequestor(requestor);
 
         Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDepartment());
         if(fetchedDepartment == null)
-            throw new DepartmentException("Department not found for name: "+requestDetails.getDepartment());
+            throw new DepartmentNotFound("Department not found for name: "+requestDetails.getDepartment());
 
 
         newRequest.setDepartment(fetchedDepartment);
@@ -170,7 +172,7 @@ public class RequestServiceImplementation implements RequestService {
 
         requestRepository.save(newRequest);
 
-        return new RequestSubmitResponse("New Request Submitted Successfully ");
+        return new RequestSubmitResponse("New Request Submitted Successfully By User cdsId: " + requestDetails.getRequestorId());
     }
 
     @Override
@@ -178,13 +180,13 @@ public class RequestServiceImplementation implements RequestService {
 
         // Find existing request
         Request existingRequest = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestException("Request Not Found with ID: " + requestId));
+                .orElseThrow(() -> new RequestNotFound("Request Not Found with ID: " + requestId));
 
         // Update department if provided
         if (requestUpdateDetails.getDepartment() != null && !requestUpdateDetails.getDepartment().isEmpty()) {
             Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestUpdateDetails.getDepartment());
             if (fetchedDepartment == null) {
-                throw new DepartmentException("Department not found for name: " + requestUpdateDetails.getDepartment());
+                throw new DepartmentNotFound("Department not found for name: " + requestUpdateDetails.getDepartment());
             }
             existingRequest.setDepartment(fetchedDepartment);
         }
@@ -219,20 +221,20 @@ public class RequestServiceImplementation implements RequestService {
         // Save updated request
         requestRepository.save(existingRequest);
 
-        return new RequestSubmitResponse("Request updated successfully");
+        return new RequestSubmitResponse("Request with id: "+existingRequest.getRequestId()+" updated successfully");
     }
 
     @Override
     public RequestSubmitResponse deleteRequest(Long requestId) throws RequestException {
         Optional<Request> requestOpt = requestRepository.findById(requestId);
         if (requestOpt.isEmpty()) {
-            throw new RequestException("Request with ID " + requestId + " not found for deletion.");
+            throw new RequestNotFound("Request with ID " + requestId + " not found for deletion.");
         }
         Request request = requestOpt.get();
         request.setRequestStatus("Deleted");
         requestRepository.save(request);
 
-        return new RequestSubmitResponse("Request deleted successfully");
+        return new RequestSubmitResponse("Request with id: "+request.getRequestId()+" deleted successfully");
     }
 
     @Override
@@ -241,6 +243,9 @@ public class RequestServiceImplementation implements RequestService {
 
         // Get all requests
         List<Request> allRequests = requestRepository.findAll();
+
+        if(allRequests.isEmpty())
+            throw new RequestNotFound("Requests not found.");
 
         // Total count
         stats.setTotal((long) allRequests.size());

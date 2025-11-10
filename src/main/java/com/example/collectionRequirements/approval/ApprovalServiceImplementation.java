@@ -4,9 +4,11 @@ import com.example.DTOs.ApprovalSubmissionResponse;
 import com.example.DTOs.NewApprovalDetails;
 import com.example.collectionRequirements.request.Request;
 import com.example.collectionRequirements.request.RequestException;
+import com.example.collectionRequirements.request.RequestNotFound;
 import com.example.collectionRequirements.request.RequestRepository;
 import com.example.user.UserException;
 import com.example.user.UserInfo;
+import com.example.user.UserNotFound;
 import com.example.user.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +34,10 @@ public class ApprovalServiceImplementation implements ApprovalService {
 
 
         Request associatedRequest = requestRepository.findById(newApprovalDetails.getRequestId())
-                .orElseThrow(() -> new RequestException("Request with ID " + newApprovalDetails.getRequestId() + " not found."));
+                .orElseThrow(() -> new RequestNotFound("Request with ID " + newApprovalDetails.getRequestId() + " not found."));
 
         UserInfo approver = userRepository.findByCdsID(newApprovalDetails.getApprovedBy())
-                .orElseThrow(() -> new UserException("User with CDS ID " + newApprovalDetails.getApprovedBy() + " not found."));
+                .orElseThrow(() -> new UserNotFound("User with CDS ID " + newApprovalDetails.getApprovedBy() + " not found."));
 
         Approval newApproval;
 

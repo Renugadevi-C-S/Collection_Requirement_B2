@@ -1,9 +1,6 @@
 package com.example.department;
 
-import com.example.user.UserException;
-import com.example.user.UserInfo;
-import com.example.user.UserRepository;
-import com.example.user.UserService;
+import com.example.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +23,23 @@ public class DepartmentServiceImplementation implements DepartmentService {
 
 
     public Department createDepartment(Department department) {
+        if(departmentRepository.findByDepartmentNameIgnoreCase(department.getDepartmentName()) != null) {
+            throw new DepartmentAlreadyExist("Department already exists with name: " + department.getDepartmentName());
+        }
         return departmentRepository.save(department);
     }
 
     public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+        List<Department> allDepartments =  departmentRepository.findAll();
+
+        if(allDepartments.isEmpty())
+            throw  new DepartmentNotFound("No departments Found.");
+        return allDepartments;
     }
 
     public Department getDepartmentById(Long departmentId) {
         return departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
+                .orElseThrow(() -> new DepartmentNotFound("Department not found with id: " + departmentId));
     }
 
 
@@ -45,20 +49,25 @@ public class DepartmentServiceImplementation implements DepartmentService {
 
     @Override
     public Department getDepartmentByName(String deptName) throws DepartmentException {
-        return departmentRepository.findByDepartmentNameIgnoreCase(deptName);
+        Department fetchDept =  departmentRepository.findByDepartmentNameIgnoreCase(deptName);
+
+        if(fetchDept == null)
+            throw new DepartmentNotFound("Department not found with name: " + deptName);
+
+        return  fetchDept;
     }
 
     @Override
     public Department addUserToDepartment(String cdsId, String deptName) {
         Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(deptName);
         if (fetchedDepartment == null) {
-            throw new DepartmentException("Department not found with name: " + deptName);
+            throw new DepartmentNotFound("Department not found with name: " + deptName);
         }
 
         Optional<UserInfo> fetchedUser = userRepository.findByCdsID(cdsId);
 
         if(fetchedUser.isEmpty())
-            throw new UserException("User not found with id: " + cdsId);
+            throw new UserNotFound("User not found with id: " + cdsId);
 
         fetchedUser.ifPresent(u -> u.setDepartment(fetchedDepartment));
         fetchedDepartment.getUsers().add(fetchedUser.get());

@@ -6,9 +6,11 @@ import com.example.DTOs.LogInResponse;
 import com.example.DTOs.NewUserInfo;
 import com.example.department.Department;
 import com.example.department.DepartmentException;
+import com.example.department.DepartmentNotFound;
 import com.example.department.DepartmentRepository;
 import com.example.region.Region;
 import com.example.region.RegionException;
+import com.example.region.RegionNotFound;
 import com.example.region.RegionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,15 +39,15 @@ public class UserServiceImplementation implements UserService {
         UserInfo newUser = new UserInfo();
 
         if(userRepository.existsByCdsID(newUserInfo.getCdsId()))
-            throw new UserException("Username already exists same CDSID");
+            throw new UserAlreadyExist("Username already exists with cdsID: "+newUserInfo.getCdsId());
 
         Department fetchDepartment = departmentRepository.findByDepartmentNameIgnoreCase(newUserInfo.getDepartment());
         if(fetchDepartment == null)
-            throw new DepartmentException("Department not found for "+newUserInfo.getDepartment());
+            throw new DepartmentNotFound("Department not found for "+newUserInfo.getDepartment());
 
         Region fetchRegion = regionRepository.findRegionsByRegionNameIgnoreCase(newUserInfo.getRegion());
         if(fetchRegion == null)
-            throw new RegionException("Region not found for "+newUserInfo.getRegion());
+            throw new RegionNotFound("Region not found for "+newUserInfo.getRegion());
 
         newUser.setCdsID(newUserInfo.getCdsId());
         newUser.setDepartment(fetchDepartment);
@@ -64,7 +66,7 @@ public class UserServiceImplementation implements UserService {
 
     public UserInfo getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFound("User not found with id: " + id));
     }
 
     public void deleteUser(Long id) {
@@ -76,7 +78,7 @@ public class UserServiceImplementation implements UserService {
         Optional<UserInfo> fetchedUser =  userRepository.findByCdsID(cdsId);
 
         if(fetchedUser.isEmpty()) {
-            throw new UserException("User not found with id: " + cdsId);
+            throw new UserNotFound("User not found with id: " + cdsId);
         }
 
         return fetchedUser.get();
@@ -90,7 +92,7 @@ public class UserServiceImplementation implements UserService {
 
         UserInfo fetchedUser = getUserByCdsId(logInRequest.getCdsId());
         if(fetchedUser == null) {
-            throw new UserException("User not found with id: " + logInRequest.getCdsId());
+            throw new UserNotFound("User not found with id: " + logInRequest.getCdsId());
         }
         logInResponse.setCdsId(fetchedUser.getCdsID());
         logInResponse.setMessage("Valid User");
