@@ -18,7 +18,7 @@ public class ApprovalController {
         this.approvalService = approvalService;
     }
 
-    @PostMapping("/newApproval")
+    @PostMapping("/submit-approval")
     public ApprovalSubmissionResponse addApproval(@RequestBody NewApprovalDetails newApprovalDetails) throws RequestException {
 
         return approvalService.addApprovalWithRequestId(newApprovalDetails);
