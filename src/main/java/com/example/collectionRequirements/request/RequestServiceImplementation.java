@@ -1,0 +1,263 @@
+package com.example.collectionRequirements.request;
+
+
+import com.example.DTOs.*;
+
+import com.example.department.Department;
+import com.example.department.DepartmentException;
+import com.example.department.DepartmentNotFound;
+import com.example.department.DepartmentRepository;
+import com.example.user.UserException;
+import com.example.user.UserInfo;
+import com.example.user.UserNotFound;
+import com.example.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class RequestServiceImplementation implements RequestService {
+
+    private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
+    private final RequestRepository requestRepository;
+
+    @Autowired
+    public RequestServiceImplementation(RequestRepository requestRepository, UserRepository userRepository, DepartmentRepository departmentRepository)
+    {
+        this.requestRepository = requestRepository;
+        this.userRepository = userRepository;
+        this.departmentRepository = departmentRepository;
+    }
+
+    /**
+     * Helper method to convert Request entity to RequestsViewDetails DTO
+     * Ensures all fields are properly set with null checks
+     */
+    private RequestsViewDetails convertToRequestsViewDetails(Request request) {
+        RequestsViewDetails requestsViewDetails = new RequestsViewDetails();
+
+        requestsViewDetails.setRequestId(request.getRequestId());
+        requestsViewDetails.setRequestStatus(request.getRequestStatus());
+        requestsViewDetails.setRequestDate(request.getRequestDate());
+        requestsViewDetails.setCurriculum(request.getCurriculumLink());
+        requestsViewDetails.setTanNo(request.getTAN_Number());
+        requestsViewDetails.setJustification(request.getJustification());
+        requestsViewDetails.setNoOfParticipants(request.getNoOfParticipants());
+
+        List<String> participantCdsIds = request.getRequestedParticipants().stream()
+                .map(UserInfo::getCdsID)
+                .toList();
+
+        if(!participantCdsIds.isEmpty()){
+            List<BasicUserInfo> basicUserInfoOfRequestedParticipants = participantCdsIds.stream()
+                    .map((cdsId) -> {
+                        return this.userRepository.findByCdsID(cdsId)
+                                .map(user -> {
+                                    BasicUserInfo basicUserInfo = new BasicUserInfo();
+                                    basicUserInfo.setCdsId(user.getCdsID());
+                                    basicUserInfo.setFirstName(user.getFirstName());
+                                    basicUserInfo.setLastName(user.getLastName());
+                                    basicUserInfo.setEmail(user.getEmail());
+                                    return basicUserInfo;
+                                })
+                                .orElse(null);
+
+                    })
+                    .toList();
+
+            requestsViewDetails.setRequestedParticipants(basicUserInfoOfRequestedParticipants);
+        }
+
+        // Set requestor
+        if(request.getRequestor() != null)
+            requestsViewDetails.setRequestedBy(request.getRequestor().getCdsID());
+
+        // Set department
+        if(request.getDepartment() != null)
+            requestsViewDetails.setDepartment(request.getDepartment().getDepartmentName());
+
+        // Set event name
+        if(request.getEvent() != null)
+            requestsViewDetails.setEventName(request.getEvent().getEventName());
+        else
+            requestsViewDetails.setEventName("EventNotCreated");
+
+        // Set approved by
+        if(request.getApproval() != null ){
+            requestsViewDetails.setApprovedBy(request.getApproval().getApprovedBy().getCdsID());
+            requestsViewDetails.setApprovalNotes(request.getApproval().getApprovalNotes());
+        }
+
+        else{
+            requestsViewDetails.setApprovedBy("Not Approved Yet");
+            requestsViewDetails.setApprovalNotes("Not Approved Yet");
+        }
+
+
+        return requestsViewDetails;
+    }
+
+    public RequestsViewDetails getRequestById(long requestId) throws RequestException {
+        Request fetchedRequest = requestRepository.findById(requestId)
+                .orElseThrow(()->new RequestNotFound("Request not found"));
+
+        return convertToRequestsViewDetails(fetchedRequest);
+    }
+    public List<RequestsViewDetails> getAllRequests() throws RequestException
+    {
+        List<Request> requestList=requestRepository.findAll();
+
+        if(requestList.isEmpty())
+        {
+            throw new RequestNotFound("No Requests Found");
+        }
+
+        return requestList.stream()
+                .map(this::convertToRequestsViewDetails)
+                .collect(Collectors.toList());
+    }
+    public List<Request> getRequestByStatus(String status) throws RequestException
+    {
+        return requestRepository.findByRequestStatus(status);
+    }
+
+    @Override
+    public List<RequestsViewDetails> getRequestByCdsId(String cdsId) throws UserException, RequestException {
+        Optional<UserInfo> fetchedUser = userRepository.findByCdsID(cdsId);
+
+        if(fetchedUser.isEmpty())
+            throw new UserNotFound("User not found");
+
+        List<Request> fetchedRequests = requestRepository.findRequestsByRequestorCdsId(cdsId);
+
+        if(fetchedRequests.isEmpty())
+            throw new RequestNotFound("Request not found");
+
+        return fetchedRequests.stream()
+                .map(this::convertToRequestsViewDetails)
+                .toList();
+    }
+
+    @Override
+    public RequestSubmitResponse submitNewRequest(RequestDetails requestDetails) throws UserException, DepartmentException {
+        Request newRequest = new Request();
+
+        UserInfo requestor = userRepository.findByCdsID(requestDetails.getRequestorId())
+                .orElseThrow(()->new UserNotFound("User not found"));
+
+        newRequest.setRequestor(requestor);
+
+        Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestDetails.getDepartment());
+        if(fetchedDepartment == null)
+            throw new DepartmentNotFound("Department not found");
+
+
+        newRequest.setDepartment(fetchedDepartment);
+        newRequest.setRequestDate(LocalDate.now());
+        newRequest.setGroupRequest(requestDetails.getNoOfParticipants() >= 10);
+        newRequest.setNoOfParticipants(requestDetails.getNoOfParticipants());
+        newRequest.setRequestStatus("Submitted");
+        newRequest.setJustification(requestDetails.getJustification());
+        newRequest.setTAN_Number(requestDetails.getTanNo());
+        newRequest.setCurriculumLink(requestDetails.getCurriculum());
+
+        if(requestDetails.getUsersCdsId() != null && requestDetails.getUsersCdsId().length > 0) {
+            List<UserInfo> participants =  userRepository.findByCdsIDIn(List.of(requestDetails.getUsersCdsId()));
+            newRequest.setRequestedParticipants(participants);
+        }
+
+        requestRepository.save(newRequest);
+
+        return new RequestSubmitResponse("New Request submitted successfully");
+    }
+
+    @Override
+    public RequestSubmitResponse updateRequest(Long requestId, RequestDetails requestUpdateDetails) throws UserException, DepartmentException, RequestException {
+
+        // Find existing request
+        Request existingRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFound("Request not found"));
+
+        // Update department if provided
+        if (requestUpdateDetails.getDepartment() != null && !requestUpdateDetails.getDepartment().isEmpty()) {
+            Department fetchedDepartment = departmentRepository.findByDepartmentNameIgnoreCase(requestUpdateDetails.getDepartment());
+            if (fetchedDepartment == null) {
+                throw new DepartmentNotFound("Department not found");
+            }
+            existingRequest.setDepartment(fetchedDepartment);
+        }
+
+        // Update justification if provided
+        if (requestUpdateDetails.getJustification() != null) {
+            existingRequest.setJustification(requestUpdateDetails.getJustification());
+        }
+
+        // Update TAN number if provided
+        if (requestUpdateDetails.getTanNo() != null) {
+            existingRequest.setTAN_Number(requestUpdateDetails.getTanNo());
+        }
+
+        // Update number of participants if provided
+        if (requestUpdateDetails.getNoOfParticipants() != null) {
+            existingRequest.setNoOfParticipants(requestUpdateDetails.getNoOfParticipants());
+            // Update group request flag based on participants
+            existingRequest.setGroupRequest(requestUpdateDetails.getNoOfParticipants() >= 10);
+        }
+
+        // Update curriculum link if provided
+        if (requestUpdateDetails.getCurriculum() != null) {
+            existingRequest.setCurriculumLink(requestUpdateDetails.getCurriculum());
+        }
+
+        if(requestUpdateDetails.getUsersCdsId() != null && requestUpdateDetails.getUsersCdsId().length > 0) {
+            List<UserInfo> participants =  userRepository.findByCdsIDIn(List.of(requestUpdateDetails.getUsersCdsId()));
+            existingRequest.setRequestedParticipants(participants);
+        }
+
+        // Save updated request
+        requestRepository.save(existingRequest);
+
+        return new RequestSubmitResponse("Request updated successfully");
+    }
+
+    @Override
+    public RequestSubmitResponse deleteRequest(Long requestId) throws RequestException {
+        Optional<Request> requestOpt = requestRepository.findById(requestId);
+        if (requestOpt.isEmpty()) {
+            throw new RequestNotFound("Request not found for deletion");
+        }
+        Request request = requestOpt.get();
+        request.setRequestStatus("Deleted");
+        requestRepository.save(request);
+
+        return new RequestSubmitResponse("Request deleted successfully");
+    }
+
+    @Override
+    public RequestStatistics getRequestStatistics() {
+        RequestStatistics stats = new RequestStatistics();
+
+        // Get all requests
+        List<Request> allRequests = requestRepository.findAll();
+
+        if(allRequests.isEmpty())
+            throw new RequestNotFound("Requests not found.");
+
+        // Total count
+        stats.setTotal((long) allRequests.size());
+
+        // Count by status
+        stats.setSubmitted(allRequests.stream().filter(r -> "Submitted".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setApproved(allRequests.stream().filter(r -> "Approved".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setRejected(allRequests.stream().filter(r -> "Rejected".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setInProgress(allRequests.stream().filter(r -> "In-Progress".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setCompleted(allRequests.stream().filter(r -> "Completed".equalsIgnoreCase(r.getRequestStatus())).count());
+        stats.setDeleted(allRequests.stream().filter(r -> "Deleted".equalsIgnoreCase(r.getRequestStatus())).count());
+
+        return stats;
+    }
+}

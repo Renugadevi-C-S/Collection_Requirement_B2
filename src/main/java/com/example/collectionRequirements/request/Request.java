@@ -4,6 +4,7 @@ import com.example.collectionRequirements.approval.Approval;
 import com.example.collectionRequirements.event.Event;
 import com.example.department.Department;
 import com.example.user.UserInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -17,18 +18,30 @@ public class Request {
     @GeneratedValue
     private Long requestId;
 
-//    @OneToOne
-//    @JoinColumn
-//    private UserInfo requestor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    @JsonIgnore
+    private UserInfo requestor;
 
-    @ManyToOne
+    public UserInfo getRequestor() {
+        return requestor;
+    }
+
+    public void setRequestor(UserInfo requestor) {
+        this.requestor = requestor;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Department department;
 
-    @ManyToOne
-    @JoinColumn(name = "eventId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    @JsonIgnore
     private Event event;
 
     @OneToOne(mappedBy = "request")
+    @JsonIgnore
     private Approval approval;
 
     private LocalDate requestDate;
@@ -73,12 +86,13 @@ public class Request {
 
     private Integer noOfParticipants;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "RequestedParticipants",
             joinColumns = @JoinColumn(name = "Request_Id", referencedColumnName = "requestId"),
             inverseJoinColumns = @JoinColumn(name = "User_Id", referencedColumnName = "userId")
     )
+    @JsonIgnore
     private List<UserInfo> requestedParticipants;
 
     private String TAN_Number;

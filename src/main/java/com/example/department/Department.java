@@ -2,6 +2,7 @@ package com.example.department;
 
 import com.example.collectionRequirements.request.Request;
 import com.example.user.UserInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,16 +16,19 @@ public class Department {
 
     private String departmentName;
 
-    @OneToOne(mappedBy = "manager")
+    @OneToOne
+    @JsonIgnore
     private UserInfo manager;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<UserInfo> users;
 
 //    @OneToOne
 //    private Budget budget;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Request> requests;
 
     public Long getDepartmentId() {
@@ -65,5 +69,16 @@ public class Department {
 
     public void setRequests(List<Request> requests) {
         this.requests = requests;
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "departmentId=" + departmentId +
+                ", departmentName='" + departmentName + '\'' +
+                ", manager=" + manager +
+                ", users=" + users +
+                ", requests=" + requests +
+                '}';
     }
 }

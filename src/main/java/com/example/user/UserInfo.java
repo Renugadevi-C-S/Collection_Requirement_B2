@@ -2,7 +2,9 @@ package com.example.user;
 
 import com.example.collectionRequirements.approval.Approval;
 import com.example.collectionRequirements.request.Request;
+import com.example.department.Department;
 import com.example.region.Region;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -14,13 +16,17 @@ public class UserInfo {
     @GeneratedValue
     private Long userId;
 
+    @Column(unique = true)
+    private String cdsID;
+
     private String firstName;
     private String lastName;
 
     private String email;
 
-//    @ManyToOne
-//    private Department department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Department department;
 
     private String role;
 
@@ -88,24 +94,35 @@ public class UserInfo {
         this.requests = requests;
     }
 
-    public Approval getApproval() {
-        return approval;
+    public String getCdsID() {
+        return cdsID;
     }
 
-    public void setApproval(Approval approval) {
-        this.approval = approval;
+    public void setCdsID(String cdsID) {
+        this.cdsID = cdsID;
     }
 
-    @ManyToOne
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Region region;
 
     @OneToOne
+    @JoinColumn
+    @JsonIgnore
     private UserInfo manager;
 
-    @ManyToMany(mappedBy = "requestedParticipants")
+    @ManyToMany(mappedBy = "requestedParticipants", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Request> requests;
 
-    @OneToOne(mappedBy = "approvedBy")
-    private Approval approval;
+
 
 }

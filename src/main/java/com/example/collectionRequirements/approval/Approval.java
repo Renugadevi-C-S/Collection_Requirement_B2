@@ -2,6 +2,7 @@ package com.example.collectionRequirements.approval;
 
 import com.example.collectionRequirements.request.Request;
 import com.example.user.UserInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -15,10 +16,12 @@ public class Approval {
 
     @OneToOne
     @JoinColumn
+    @JsonIgnore
     private Request request;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
+    @JsonIgnore
     private UserInfo approvedBy;
 
     private LocalDate approvalDate;

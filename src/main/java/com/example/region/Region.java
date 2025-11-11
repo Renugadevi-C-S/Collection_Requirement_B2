@@ -1,10 +1,8 @@
 package com.example.region;
 
 import com.example.user.UserInfo;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Future;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -12,6 +10,7 @@ import java.util.List;
 public class Region {
 
     @Id
+    @GeneratedValue
     private Long regionId;
 
     private String regionName;
@@ -50,7 +49,8 @@ public class Region {
         this.users = users;
     }
 
-    @OneToMany(mappedBy = "region")
+    @OneToMany(mappedBy = "region", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<UserInfo> users;
 
 

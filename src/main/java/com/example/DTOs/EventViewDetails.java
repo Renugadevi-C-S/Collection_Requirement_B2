@@ -1,41 +1,19 @@
-package com.example.collectionRequirements.event;
-
-import com.example.collectionRequirements.request.Request;
-import com.example.user.UserInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+package com.example.DTOs;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity
-public class Event {
-
-    @Id
-    @GeneratedValue
+public class EventViewDetails {
     private Long eventId;
-
     private String eventName;
-
     private String description;
-
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Request> requests;
-
-    private Integer participantsCount;
-
     private Integer duration;
-
     private String eventType;
-
     private String fundingSource;
-
+    private Integer participantsCount;
     private String status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    private UserInfo createdBy;
+    private String createdBy;
+    private List<RequestsViewDetails> linkedRequests;
 
     private LocalDate createdDate;
 
@@ -46,14 +24,6 @@ public class Event {
     private String cancelledBy;
     private String cancellationNotes;
     private LocalDate cancelledDate;
-
-    public UserInfo getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(UserInfo createdBy) {
-        this.createdBy = createdBy;
-    }
 
     public Long getEventId() {
         return eventId;
@@ -79,28 +49,12 @@ public class Event {
         this.description = description;
     }
 
-    public List<Request> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(List<Request> requests) {
-        this.requests = requests;
-    }
-
-    public Integer getParticipantsCount() {
-        return participantsCount;
-    }
-
-    public void setParticipantsCount(Integer noOfParticipants) {
-        this.participantsCount = noOfParticipants;
-    }
-
     public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer durationInHours) {
-        this.duration = durationInHours;
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     public String getEventType() {
@@ -119,12 +73,36 @@ public class Event {
         this.fundingSource = fundingSource;
     }
 
+    public Integer getParticipantsCount() {
+        return participantsCount;
+    }
+
+    public void setParticipantsCount(Integer participantsCount) {
+        this.participantsCount = participantsCount;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String eventStatus) {
-        this.status = eventStatus;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public List<RequestsViewDetails> getLinkedRequests() {
+        return linkedRequests;
+    }
+
+    public void setLinkedRequests(List<RequestsViewDetails> linkedRequests) {
+        this.linkedRequests = linkedRequests;
     }
 
     public LocalDate getCreatedDate() {
@@ -181,25 +159,5 @@ public class Event {
 
     public void setCancelledDate(LocalDate cancelledDate) {
         this.cancelledDate = cancelledDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "eventId=" + eventId +
-                ", eventName='" + eventName + '\'' +
-                ", eventDescription='" + description + '\'' +
-                ", requests=" + requests +
-                ", noOfParticipants=" + participantsCount +
-                ", durationInHours=" + duration +
-                ", eventType='" + eventType + '\'' +
-                ", fundingSource=" + fundingSource +
-                ", eventStatus='" + status + '\'' +
-                ", createdDate=" + createdDate +
-                ", completedBy='" + completedBy + '\'' +
-                ", completedDate=" + completedDate +
-                ", cancelledBy='" + cancelledBy + '\'' +
-                ", cancelledDate=" + cancelledDate +
-                '}';
     }
 }
