@@ -506,10 +506,7 @@ public class EventServiceImplementation implements EventService {
     public EventStatistics getEventStatistics() {
         EventStatistics stats = new EventStatistics();
 
-        // Get all events
         List<Event> allEvents = eventRepository.findAll();
-
-        // Total count
         stats.setTotal((long) allEvents.size());
 
         // Count by status
